@@ -1,36 +1,20 @@
-import 'dart:developer';
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../models/login_request_model.dart';
-import '../models/login_response_model.dart';
-import '../models/refresh_token_request_model.dart';
+import 'auth_remote_data_source.dart';
+
+import 'package:dio/dio.dart';
 import 'auth_remote_data_source.dart';
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final Dio _dio;
-  final FlutterSecureStorage _secureStorage;
 
-  AuthRemoteDataSourceImpl(this._dio, this._secureStorage);
+  AuthRemoteDataSourceImpl(this._dio);
 
   @override
-  Future<LoginResponseModel> login(LoginRequestModel request) async {
+  Future<Map<String, dynamic>> login(Map<String, dynamic> requestData) async {
     try {
-      final response = await _dio.post('/login', data: request.toJson());
-      final loginResponse = LoginResponseModel.fromJson(response.data);
-      await _secureStorage.write(
-        key: 'accessToken',
-        value: loginResponse.accessToken,
-      );
-      await _secureStorage.write(
-        key: 'refreshToken',
-        value: loginResponse.refreshToken,
-      );
-      await _secureStorage.write(
-        key: 'expiresAtUtc',
-        value: loginResponse.expiresAtUtc.toIso8601String(),
-      );
-      return loginResponse;
+      final response = await _dio.post('/login', data: requestData);
+      return response.data as Map<String, dynamic>;
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? 'Login failed');
     } catch (e) {
@@ -39,28 +23,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<LoginResponseModel> refreshToken(
-    RefreshTokenRequestModel request,
+  Future<Map<String, dynamic>> refreshToken(
+    Map<String, dynamic> requestData,
   ) async {
     try {
-      final response = await _dio.post(
-        '/refresh-token',
-        data: request.toJson(),
-      );
-      final loginResponse = LoginResponseModel.fromJson(response.data);
-      await _secureStorage.write(
-        key: 'accessToken',
-        value: loginResponse.accessToken,
-      );
-      await _secureStorage.write(
-        key: 'refreshToken',
-        value: loginResponse.refreshToken,
-      );
-      await _secureStorage.write(
-        key: 'expiresAtUtc',
-        value: loginResponse.expiresAtUtc.toIso8601String(),
-      );
-      return loginResponse;
+      final response = await _dio.post('/refresh-token', data: requestData);
+      return response.data as Map<String, dynamic>;
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? 'Token refresh failed');
     } catch (e) {

@@ -47,13 +47,12 @@ Future<void> setupGetIt() async {
   log('setupGetIt: Dio registered');
 
   // Data sources
+  // Data sources
   getIt.registerLazySingleton<AuthRemoteDataSource>(() {
     log('setupGetIt: Registering AuthRemoteDataSource');
-    return AuthRemoteDataSourceImpl(
-      getIt<Dio>(),
-      getIt<FlutterSecureStorage>(),
-    );
+    return AuthRemoteDataSourceImpl(getIt<Dio>());
   });
+
   log('setupGetIt: AuthRemoteDataSource registered');
 
   // Repositories
