@@ -229,7 +229,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           onPressed: () {
                             if (_formKey.currentState!.validate() &&
                                 _agreeTerms) {
-                              context.go('/login');
+                              // Static UI only - no registration logic
+                            } else {
+                              if (!_agreeTerms) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Please agree to the terms and conditions',
+                                    ),
+                                    backgroundColor: Colors.orange,
+                                  ),
+                                );
+                              }
                             }
                           },
                           child: Text(
