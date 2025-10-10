@@ -5,11 +5,16 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:laza/core/network/dio_interceptor.dart';
 import 'package:laza/core/routing/app_router.dart';
+import 'package:laza/core/services/local_storage_service.dart';
 import 'package:laza/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:laza/features/auth/data/datasources/auth_remote_data_source_impl.dart';
 import 'package:laza/features/auth/data/repositories/auth_repository.dart';
 import 'package:laza/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:laza/features/auth/presentation/cubits/login_cubit/login_cubit.dart';
+import 'package:laza/features/onboarding/data/repositories/gender_repository_impl.dart';
+import 'package:laza/features/onboarding/data/repositories/gender_repository.dart';
+import 'package:laza/features/onboarding/presentation/cubits/gender_cubit/gender_cubit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final getIt = GetIt.instance;
 
@@ -78,6 +83,22 @@ Future<void> setupGetIt() async {
     return AppRouter();
   });
   log('setupGetIt: AppRouter registered');
+
+  // Local Storage
+  final sharedPreferences = await SharedPreferences.getInstance();
+  getIt.registerLazySingleton<LocalStorageService>(
+    () => LocalStorageService(sharedPreferences),
+  );
+
+  // Gender Repository
+  getIt.registerLazySingleton<GenderRepository>(
+    () => GenderRepositoryImpl(getIt<LocalStorageService>()),
+  );
+
+  // Gender Cubit
+  getIt.registerFactory<GenderCubit>(
+    () => GenderCubit(getIt<GenderRepository>()),
+  );
 
   log('setupGetIt: GetIt setup completed');
 }

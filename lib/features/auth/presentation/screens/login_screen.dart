@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:laza/core/di/injection_container.dart';
 import 'package:laza/core/utils/app_colors.dart';
 import 'package:laza/core/utils/app_styles.dart';
+import 'package:laza/core/services/local_storage_service.dart';
 import 'package:laza/features/auth/presentation/cubits/login_cubit/login_cubit.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -46,7 +47,21 @@ class _LoginScreenState extends State<LoginScreen> {
               ScaffoldMessenger.of(
                 context,
               ).showSnackBar(SnackBar(content: Text(state.message)));
-              context.go('/home'); // Navigate to home on successful login
+
+              // Check if gender is selected before navigating
+              final localStorage = getIt<LocalStorageService>();
+              final savedGender = localStorage.getGender();
+              log('LoginScreen: Checking saved gender: $savedGender');
+
+              if (savedGender != null) {
+                log('LoginScreen: Gender found, navigating to home');
+                context.go('/home');
+              } else {
+                log(
+                  'LoginScreen: No gender found, navigating to gender selection',
+                );
+                context.go('/gender-selection');
+              }
             } else if (state is LoginFailure) {
               ScaffoldMessenger.of(
                 context,
