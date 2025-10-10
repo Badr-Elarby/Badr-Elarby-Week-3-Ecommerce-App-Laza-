@@ -13,6 +13,7 @@ import 'package:laza/features/favorites/presentation/screens/favourite_screen.da
 import 'package:laza/features/onboarding/presentation/cubits/gender_cubit/gender_cubit.dart';
 import 'package:laza/features/onboarding/presentation/screens/gender_selection_screen.dart';
 import 'package:laza/features/spalsh/presentation/screens/splash_screen.dart';
+import 'package:laza/features/favorites/presentation/cubits/favorites_cubit/favorites_cubit.dart';
 
 // ✅ Import your shell (navigation bar) widget
 import 'package:laza/features/home/presentation/screens/home_screen.dart';
@@ -75,16 +76,21 @@ class AppRouter {
         // ---------------- SHELL ROUTE (for main app navigation) ----------------
         ShellRoute(
           builder: (context, state, child) {
-            return AppShell(child: child); // The bottom nav shell
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (_) => getIt<HomeCubit>()..getProducts()),
+                BlocProvider(
+                  create: (_) => getIt<FavoritesCubit>()..loadFavorites(),
+                ),
+              ],
+              child: AppShell(child: child), // The bottom nav shell
+            );
           },
           routes: [
             GoRoute(
               path: '/home',
               name: AppRoutes.home,
-              builder: (context, state) => BlocProvider(
-                create: (_) => getIt<HomeCubit>()..getProducts(),
-                child: const HomeScreen(),
-              ),
+              builder: (context, state) => const HomeScreen(),
             ),
             GoRoute(
               path: '/favorites',

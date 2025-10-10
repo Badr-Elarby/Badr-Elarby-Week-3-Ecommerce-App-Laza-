@@ -16,6 +16,7 @@ class ProductModel extends Equatable {
   final int reviewsCount;
   final double discountPercentage;
   final List<String> categories;
+  final bool isLiked;
 
   const ProductModel({
     required this.id,
@@ -33,6 +34,7 @@ class ProductModel extends Equatable {
     required this.reviewsCount,
     required this.discountPercentage,
     required this.categories,
+    this.isLiked = false,
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
@@ -54,6 +56,7 @@ class ProductModel extends Equatable {
       categories: (json['categories'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
+      isLiked: json['isLiked'] as bool? ?? false,
     );
   }
 
@@ -74,7 +77,46 @@ class ProductModel extends Equatable {
       'reviewsCount': reviewsCount,
       'discountPercentage': discountPercentage,
       'categories': categories,
+      'isLiked': isLiked,
     };
+  }
+
+  ProductModel copyWith({
+    String? id,
+    String? productCode,
+    String? name,
+    String? description,
+    String? arabicName,
+    String? arabicDescription,
+    String? coverPictureUrl,
+    double? price,
+    int? stock,
+    double? weight,
+    String? color,
+    double? rating,
+    int? reviewsCount,
+    double? discountPercentage,
+    List<String>? categories,
+    bool? isLiked,
+  }) {
+    return ProductModel(
+      id: id ?? this.id,
+      productCode: productCode ?? this.productCode,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      arabicName: arabicName ?? this.arabicName,
+      arabicDescription: arabicDescription ?? this.arabicDescription,
+      coverPictureUrl: coverPictureUrl ?? this.coverPictureUrl,
+      price: price ?? this.price,
+      stock: stock ?? this.stock,
+      weight: weight ?? this.weight,
+      color: color ?? this.color,
+      rating: rating ?? this.rating,
+      reviewsCount: reviewsCount ?? this.reviewsCount,
+      discountPercentage: discountPercentage ?? this.discountPercentage,
+      categories: categories ?? this.categories,
+      isLiked: isLiked ?? this.isLiked,
+    );
   }
 
   @override
@@ -94,5 +136,6 @@ class ProductModel extends Equatable {
     reviewsCount,
     discountPercentage,
     categories,
+    isLiked,
   ];
 }

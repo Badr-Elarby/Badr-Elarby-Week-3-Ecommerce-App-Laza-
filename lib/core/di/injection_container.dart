@@ -19,6 +19,7 @@ import 'package:laza/features/home/presentation/cubits/home_cubit/home_cubit.dar
 import 'package:laza/features/onboarding/data/repositories/gender_repository_impl.dart';
 import 'package:laza/features/onboarding/data/repositories/gender_repository.dart';
 import 'package:laza/features/onboarding/presentation/cubits/gender_cubit/gender_cubit.dart';
+import 'package:laza/features/favorites/presentation/cubits/favorites_cubit/favorites_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final getIt = GetIt.instance;
@@ -85,6 +86,9 @@ Future<void> setupGetIt() async {
   });
   log('setupGetIt: HomeRepository registered');
 
+  // Local Storage
+  final sharedPreferences = await SharedPreferences.getInstance();
+
   // Cubits
   getIt.registerFactory<LoginCubit>(() {
     log('setupGetIt: Registering LoginCubit');
@@ -94,7 +98,7 @@ Future<void> setupGetIt() async {
 
   getIt.registerFactory<HomeCubit>(() {
     log('setupGetIt: Registering HomeCubit');
-    return HomeCubit(getIt<HomeRepository>());
+    return HomeCubit(getIt<HomeRepository>(), sharedPreferences);
   });
   log('setupGetIt: HomeCubit registered');
 
@@ -104,9 +108,6 @@ Future<void> setupGetIt() async {
     return AppRouter();
   });
   log('setupGetIt: AppRouter registered');
-
-  // Local Storage
-  final sharedPreferences = await SharedPreferences.getInstance();
   getIt.registerLazySingleton<LocalStorageService>(
     () => LocalStorageService(sharedPreferences),
   );
@@ -120,6 +121,17 @@ Future<void> setupGetIt() async {
   getIt.registerFactory<GenderCubit>(
     () => GenderCubit(getIt<GenderRepository>()),
   );
+
+  // Favorites Feature Dependencies
+  getIt.registerLazySingleton<FavoritesCubit>(() {
+    log('[DI] Registering FavoritesCubit as lazySingleton');
+    final cubit = FavoritesCubit(sharedPreferences);
+    log(
+      '[DI] Created FavoritesCubit with hashCode: ${identityHashCode(cubit)}',
+    );
+    return cubit;
+  });
+  log('[DI] FavoritesCubit registered successfully');
 
   log('setupGetIt: GetIt setup completed');
 }

@@ -5,9 +5,11 @@ import 'package:go_router/go_router.dart';
 import 'package:laza/core/di/injection_container.dart';
 import 'package:laza/core/utils/app_colors.dart';
 import 'package:laza/core/utils/app_styles.dart';
+import 'package:laza/core/utils/product_grid_config.dart';
 import 'package:laza/core/utils/string_extension.dart';
 import 'package:laza/features/home/presentation/cubits/home_cubit/home_cubit.dart';
 import 'package:laza/features/home/presentation/widgits/BrandCard.dart';
+import 'package:laza/features/home/presentation/widgets/home_product_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -245,15 +247,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             SizedBox(height: 15.h),
                             GridView.builder(
                               shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
+                              physics: const NeverScrollableScrollPhysics(),
+                              padding: EdgeInsets.symmetric(horizontal: 16.w),
                               itemCount: _filterProducts(state.products).length,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    mainAxisSpacing: 16.h,
-                                    crossAxisSpacing: 16.w,
-                                    childAspectRatio: 0.7,
-                                  ),
+                              gridDelegate: ProductGridConfig.gridDelegate,
                               itemBuilder: (context, index) {
                                 final filteredProducts = _filterProducts(
                                   state.products,
@@ -266,123 +263,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       extra: product,
                                     );
                                   },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: AppColors.White,
-                                      borderRadius: BorderRadius.circular(16.r),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black12,
-                                          blurRadius: 6,
-                                          offset: Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Expanded(
-                                          child: Stack(
-                                            children: [
-                                              ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.vertical(
-                                                      top: Radius.circular(
-                                                        16.r,
-                                                      ),
-                                                    ),
-                                                child: Image.network(
-                                                  product.coverPictureUrl,
-                                                  width: double.infinity,
-                                                  height: double.infinity,
-                                                  fit: BoxFit.cover,
-                                                  errorBuilder:
-                                                      (
-                                                        context,
-                                                        error,
-                                                        stackTrace,
-                                                      ) {
-                                                        return Image.asset(
-                                                          'assets/images/image.png',
-                                                          width:
-                                                              double.infinity,
-                                                          height:
-                                                              double.infinity,
-                                                          fit: BoxFit.cover,
-                                                        );
-                                                      },
-                                                  loadingBuilder: (context, child, loadingProgress) {
-                                                    if (loadingProgress ==
-                                                        null) {
-                                                      return child;
-                                                    }
-                                                    return Center(
-                                                      child: CircularProgressIndicator(
-                                                        value:
-                                                            loadingProgress
-                                                                    .expectedTotalBytes !=
-                                                                null
-                                                            ? loadingProgress
-                                                                      .cumulativeBytesLoaded /
-                                                                  loadingProgress
-                                                                      .expectedTotalBytes!
-                                                            : null,
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
-                                              ),
-                                              Positioned(
-                                                top: 8.h,
-                                                right: 8.w,
-                                                child: GestureDetector(
-                                                  onTap: () {
-                                                    // TODO: Implement favorite functionality
-                                                  },
-                                                  child: Container(
-                                                    padding: EdgeInsets.all(
-                                                      4.w,
-                                                    ),
-                                                    decoration: BoxDecoration(
-                                                      color: AppColors.White,
-                                                      shape: BoxShape.circle,
-                                                    ),
-                                                    child: Icon(
-                                                      Icons.favorite_border,
-                                                      size: 20.sp,
-                                                      color:
-                                                          AppColors.AlmostBlack,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.all(8.w),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                product.name,
-                                                style: AppTextStyles
-                                                    .AlmostBlack15Semibold,
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                              SizedBox(height: 4.h),
-                                              Text(
-                                                '\$${product.price.toStringAsFixed(2)}',
-                                                style: AppTextStyles
-                                                    .AlmostBlack13Semibold,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                  child: HomeProductCard(product: product),
                                 );
                               },
                             ),
