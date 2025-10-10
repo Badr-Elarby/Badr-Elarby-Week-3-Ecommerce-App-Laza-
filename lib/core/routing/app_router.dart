@@ -16,6 +16,7 @@ import 'package:laza/features/spalsh/presentation/screens/splash_screen.dart';
 
 // ✅ Import your shell (navigation bar) widget
 import 'package:laza/features/home/presentation/screens/home_screen.dart';
+import 'package:laza/features/home/presentation/cubits/home_cubit/home_cubit.dart';
 
 class AppRouter {
   late GoRouter router;
@@ -80,7 +81,10 @@ class AppRouter {
             GoRoute(
               path: '/home',
               name: AppRoutes.home,
-              builder: (context, state) => const HomeScreen(),
+              builder: (context, state) => BlocProvider(
+                create: (_) => getIt<HomeCubit>()..getProducts(),
+                child: const HomeScreen(),
+              ),
             ),
             GoRoute(
               path: '/favorites',

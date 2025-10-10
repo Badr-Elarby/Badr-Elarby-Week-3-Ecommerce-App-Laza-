@@ -13,7 +13,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<Map<String, dynamic>> login(Map<String, dynamic> requestData) async {
     try {
-      final response = await _dio.post('/login', data: requestData);
+      final response = await _dio.post('/auth/login', data: requestData);
       return response.data as Map<String, dynamic>;
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? 'Login failed');
@@ -27,7 +27,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     Map<String, dynamic> requestData,
   ) async {
     try {
-      final response = await _dio.post('/refresh-token', data: requestData);
+      final response = await _dio.post(
+        '/auth/refresh-token',
+        data: requestData,
+      );
       return response.data as Map<String, dynamic>;
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? 'Token refresh failed');

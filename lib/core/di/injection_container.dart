@@ -11,6 +11,11 @@ import 'package:laza/features/auth/data/datasources/auth_remote_data_source_impl
 import 'package:laza/features/auth/data/repositories/auth_repository.dart';
 import 'package:laza/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:laza/features/auth/presentation/cubits/login_cubit/login_cubit.dart';
+import 'package:laza/features/home/data/datasources/home_remote_data_source.dart';
+import 'package:laza/features/home/data/datasources/home_remote_data_source_impl.dart';
+import 'package:laza/features/home/data/repositories/home_repository.dart';
+import 'package:laza/features/home/data/repositories/home_repository_impl.dart';
+import 'package:laza/features/home/presentation/cubits/home_cubit/home_cubit.dart';
 import 'package:laza/features/onboarding/data/repositories/gender_repository_impl.dart';
 import 'package:laza/features/onboarding/data/repositories/gender_repository.dart';
 import 'package:laza/features/onboarding/presentation/cubits/gender_cubit/gender_cubit.dart';
@@ -40,7 +45,7 @@ Future<void> setupGetIt() async {
     log('setupGetIt: Registering Dio');
     final dio = Dio(
       BaseOptions(
-        baseUrl: 'https://accessories-eshop.runasp.net/api/auth/',
+        baseUrl: 'https://accessories-eshop.runasp.net/api/',
         receiveDataWhenStatusError: true,
         connectTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 30),
@@ -51,14 +56,18 @@ Future<void> setupGetIt() async {
   });
   log('setupGetIt: Dio registered');
 
-  // Data sources
-  // Data sources
+  // Data Sources
   getIt.registerLazySingleton<AuthRemoteDataSource>(() {
     log('setupGetIt: Registering AuthRemoteDataSource');
     return AuthRemoteDataSourceImpl(getIt<Dio>());
   });
-
   log('setupGetIt: AuthRemoteDataSource registered');
+
+  getIt.registerLazySingleton<HomeRemoteDataSource>(() {
+    log('setupGetIt: Registering HomeRemoteDataSource');
+    return HomeRemoteDataSourceImpl(getIt<Dio>());
+  });
+  log('setupGetIt: HomeRemoteDataSource registered');
 
   // Repositories
   getIt.registerLazySingleton<AuthRepository>(() {
@@ -70,12 +79,24 @@ Future<void> setupGetIt() async {
   });
   log('setupGetIt: AuthRepository registered');
 
+  getIt.registerLazySingleton<HomeRepository>(() {
+    log('setupGetIt: Registering HomeRepository');
+    return HomeRepositoryImpl(getIt<HomeRemoteDataSource>());
+  });
+  log('setupGetIt: HomeRepository registered');
+
   // Cubits
   getIt.registerFactory<LoginCubit>(() {
     log('setupGetIt: Registering LoginCubit');
     return LoginCubit(getIt<AuthRepository>());
   });
   log('setupGetIt: LoginCubit registered');
+
+  getIt.registerFactory<HomeCubit>(() {
+    log('setupGetIt: Registering HomeCubit');
+    return HomeCubit(getIt<HomeRepository>());
+  });
+  log('setupGetIt: HomeCubit registered');
 
   // App Router
   getIt.registerLazySingleton<AppRouter>(() {
