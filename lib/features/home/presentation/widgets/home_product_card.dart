@@ -138,7 +138,7 @@ class HomeProductCard extends StatelessWidget {
           ),
           // Product Details
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(6.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -151,7 +151,7 @@ class HomeProductCard extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
                   '\$${product.price.toStringAsFixed(2)}',
                   style: const TextStyle(

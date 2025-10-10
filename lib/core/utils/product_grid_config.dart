@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductGridConfig {
   static const int crossAxisCount = 2;
-  static const double aspectRatio = 0.68; // Adjusted ratio to prevent overflow
+  static const double aspectRatio = 0.6; // Adjusted ratio to prevent overflow
 
   static SliverGridDelegateWithFixedCrossAxisCount get gridDelegate =>
       SliverGridDelegateWithFixedCrossAxisCount(

@@ -34,10 +34,9 @@ class FavoriteProductCard extends StatelessWidget {
                   width: double.infinity,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      height: 160,
-                      color: Colors.grey[200],
-                      child: const Icon(Icons.image_not_supported),
+                    return Image.asset(
+                      'assets/images/image.png',
+                      fit: BoxFit.cover,
                     );
                   },
                 ),
