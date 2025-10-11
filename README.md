@@ -115,7 +115,7 @@ lib/
 ### 💖 Favorites & Product Details
 | Favorites | Product Details |
 |:--:|:--:|
-| ![Favorites](screenshots/favorite.jpg) | ![Product Details](screenshots/ProductDetails.jpg) |
+| ![Favorites](screenshots/favourite.jpg) | ![Product Details](screenshots/ProductDetails.jpg) |
 
 ---
 
