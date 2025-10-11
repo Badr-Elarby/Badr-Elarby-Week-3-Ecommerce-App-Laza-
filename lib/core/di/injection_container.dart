@@ -23,6 +23,9 @@ import 'package:laza/features/favorites/presentation/cubits/favorites_cubit/favo
 import 'package:laza/features/ProductDetails/data/datasources/product_details_datasource.dart';
 import 'package:laza/features/ProductDetails/data/repositories/product_details_repository.dart';
 import 'package:laza/features/ProductDetails/presentation/cubit/product_details_cubit.dart';
+import 'package:laza/features/Cart/data/repositories/cart_repository.dart';
+import 'package:laza/features/Cart/data/services/cart_service.dart';
+import 'package:laza/features/Cart/presentation/cubits/cart_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final getIt = GetIt.instance;
@@ -152,6 +155,19 @@ Future<void> setupGetIt() async {
     () => ProductDetailsCubit(repository: getIt<ProductDetailsRepository>()),
   );
   log('[DI] ProductDetailsCubit registered');
+
+  // Cart Feature Dependencies
+  getIt.registerLazySingleton<CartRepository>(
+    () => CartRepositoryImpl(sharedPreferences),
+  );
+  log('[DI] CartRepository registered');
+
+  // Initialize CartService
+  CartService().initialize(getIt<CartRepository>());
+  log('[DI] CartService initialized');
+
+  getIt.registerFactory<CartCubit>(() => CartCubit(getIt<CartRepository>()));
+  log('[DI] CartCubit registered');
 
   log('setupGetIt: GetIt setup completed');
 }

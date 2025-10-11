@@ -8,6 +8,7 @@ import 'package:laza/core/utils/app_colors.dart';
 import 'package:laza/core/utils/app_styles.dart';
 import 'package:laza/features/ProductDetails/presentation/cubit/product_details_cubit.dart';
 import 'package:laza/features/ProductDetails/presentation/cubit/product_details_state.dart';
+import 'package:laza/features/Cart/data/services/cart_service.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final String productId;
@@ -399,7 +400,44 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               borderRadius: BorderRadius.circular(16.r),
                             ),
                           ),
-                          onPressed: () {},
+                          onPressed: () async {
+                            try {
+                              // Add product to cart
+                              await CartService().addProduct(
+                                product,
+                                color: product.color.isNotEmpty
+                                    ? product.color
+                                    : null,
+                                size: sizes[selectedSize],
+                              );
+
+                              // Show success message
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      '${product.name} added to cart!',
+                                    ),
+                                    backgroundColor: AppColors.LightPurple,
+                                    duration: const Duration(seconds: 2),
+                                  ),
+                                );
+                              }
+                            } catch (e) {
+                              // Show error message
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Failed to add product to cart: $e',
+                                    ),
+                                    backgroundColor: Colors.red,
+                                    duration: const Duration(seconds: 3),
+                                  ),
+                                );
+                              }
+                            }
+                          },
                           child: Text(
                             'Add to Cart',
                             style: AppTextStyles.White17Medium.copyWith(
