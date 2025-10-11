@@ -124,3 +124,9 @@ lib/
 |:--:|:--:|
 | ![Cart](screenshots/cart.jpg) | ![Order Confirmation](screenshots/OrderConfirmation.jpg) |
 
+
+## 🎬 App Preview
+
+![App Demo](screenshots/demo.gif)
+
+
