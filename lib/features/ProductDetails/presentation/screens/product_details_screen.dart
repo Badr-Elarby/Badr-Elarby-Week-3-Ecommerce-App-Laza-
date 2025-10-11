@@ -36,9 +36,12 @@ class _InfoChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: AppColors.AlmostBlack),
+          Icon(icon, size: 16.sp, color: AppColors.AlmostBlack),
           SizedBox(width: 4.w),
-          Text(label, style: AppTextStyles.Gray13Regular),
+          Text(
+            label,
+            style: AppTextStyles.Gray13Regular.copyWith(fontSize: 13.sp),
+          ),
         ],
       ),
     );
@@ -74,7 +77,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           }
 
           if (state is ProductDetailsError) {
-            return Scaffold(body: Center(child: Text(state.message)));
+            return Scaffold(
+              body: Center(
+                child: Text(state.message, style: TextStyle(fontSize: 16.sp)),
+              ),
+            );
           }
 
           if (state is ProductDetailsLoaded) {
@@ -91,6 +98,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   icon: Icon(
                     Icons.arrow_back_ios_new_rounded,
                     color: AppColors.AlmostBlack,
+                    size: 20.sp,
                   ),
                   onPressed: () => Navigator.pop(context),
                 ),
@@ -99,10 +107,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     icon: Icon(
                       Icons.shopping_bag_outlined,
                       color: AppColors.AlmostBlack,
+                      size: 22.sp,
                     ),
-                    onPressed: () {
-                      context.push('/cart');
-                    },
+                    onPressed: () => context.push('/cart'),
                   ),
                 ],
               ),
@@ -118,23 +125,26 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           child: product.coverPictureUrl.isNotEmpty
                               ? Image.network(
                                   product.coverPictureUrl,
+                                  width: 1.sw,
                                   height: 260.h,
-                                  fit: BoxFit.contain,
+                                  fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) {
                                     log(
                                       '🛍️ [ProductDetailsScreen] Failed to load main image: $error',
                                     );
                                     return Image.asset(
                                       'assets/images/image.png',
+                                      width: 1.sw,
                                       height: 260.h,
-                                      fit: BoxFit.contain,
+                                      fit: BoxFit.cover,
                                     );
                                   },
                                 )
                               : Image.asset(
                                   'assets/images/image.png',
+                                  width: 1.sw,
                                   height: 260.h,
-                                  fit: BoxFit.contain,
+                                  fit: BoxFit.cover,
                                 ),
                         ),
                         SizedBox(height: 16.h),
@@ -148,7 +158,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 children: [
                                   Text(
                                     product.productCode,
-                                    style: AppTextStyles.Grey15Regular,
+                                    style: AppTextStyles.Grey15Regular.copyWith(
+                                      fontSize: 15.sp,
+                                    ),
                                   ),
                                   if (product.discountPercentage > 0) ...[
                                     const Spacer(),
@@ -169,6 +181,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         style:
                                             AppTextStyles
                                                 .Grey15Regular.copyWith(
+                                              fontSize: 13.sp,
                                               color: AppColors.LightPurple,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -184,7 +197,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     child: Text(
                                       product.name,
                                       style:
-                                          AppTextStyles.AlmostBlack22Semibold,
+                                          AppTextStyles
+                                              .AlmostBlack22Semibold.copyWith(
+                                            fontSize: 22.sp,
+                                          ),
                                     ),
                                   ),
                                   Column(
@@ -196,6 +212,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           style:
                                               AppTextStyles
                                                   .Grey15Regular.copyWith(
+                                                fontSize: 15.sp,
                                                 decoration:
                                                     TextDecoration.lineThrough,
                                               ),
@@ -205,6 +222,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         style:
                                             AppTextStyles
                                                 .AlmostBlack22Semibold.copyWith(
+                                              fontSize: 22.sp,
                                               color: AppColors.LightPurple,
                                             ),
                                       ),
@@ -226,21 +244,26 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   Icon(
                                     Icons.star_rounded,
                                     color: Colors.amber,
-                                    size: 20,
+                                    size: 20.sp,
                                   ),
                                   SizedBox(width: 4.w),
                                   Text(
-                                    '${product.rating.toStringAsFixed(1)} ',
-                                    style: AppTextStyles.AlmostBlack15Semibold,
+                                    '${product.rating.toStringAsFixed(1)}',
+                                    style:
+                                        AppTextStyles
+                                            .AlmostBlack15Semibold.copyWith(
+                                          fontSize: 15.sp,
+                                        ),
                                   ),
                                   Text(
-                                    '(${product.reviewsCount} reviews)',
-                                    style: AppTextStyles.Grey15Regular,
+                                    ' (${product.reviewsCount} reviews)',
+                                    style: AppTextStyles.Grey15Regular.copyWith(
+                                      fontSize: 15.sp,
+                                    ),
                                   ),
                                 ],
                               ),
                               const Spacer(),
-
                               _InfoChip(
                                 icon: Icons.inventory_2_outlined,
                                 label: product.inStock
@@ -250,18 +273,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             ],
                           ),
                         ),
-
                         SizedBox(height: 16.h),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16.w),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Size',
-                                style: AppTextStyles.AlmostBlack15Semibold,
-                              ),
-                            ],
+                          child: Text(
+                            'Size',
+                            style: AppTextStyles.AlmostBlack15Semibold.copyWith(
+                              fontSize: 15.sp,
+                            ),
                           ),
                         ),
                         SizedBox(height: 8.h),
@@ -276,7 +295,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 child: ChoiceChip(
                                   label: Text(
                                     sizes[index],
-                                    style: AppTextStyles.AlmostBlack15Semibold,
+                                    style:
+                                        AppTextStyles
+                                            .AlmostBlack15Semibold.copyWith(
+                                          fontSize: 15.sp,
+                                        ),
                                   ),
                                   selected: selectedSize == index,
                                   selectedColor: AppColors.LightPurple,
@@ -285,6 +308,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     color: selectedSize == index
                                         ? AppColors.White
                                         : AppColors.AlmostBlack,
+                                    fontSize: 15.sp,
                                   ),
                                   onSelected: (_) =>
                                       setState(() => selectedSize = index),
@@ -294,12 +318,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           ),
                         ),
                         SizedBox(height: 20.h),
-                        // Description
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16.w),
                           child: Text(
                             'Description',
-                            style: AppTextStyles.AlmostBlack17Semibold,
+                            style: AppTextStyles.AlmostBlack17Semibold.copyWith(
+                              fontSize: 17.sp,
+                            ),
                           ),
                         ),
                         Padding(
@@ -312,32 +337,28 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             children: [
                               Text(
                                 product.description,
-                                style: AppTextStyles.Grey15Regular,
+                                style: AppTextStyles.Grey15Regular.copyWith(
+                                  fontSize: 15.sp,
+                                ),
                                 maxLines: _isExpanded ? null : 3,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              if (!_isExpanded)
-                                TextButton(
-                                  onPressed: () =>
-                                      setState(() => _isExpanded = true),
-                                  child: Text(
-                                    'Read Less',
-                                    style: AppTextStyles.LightPurple15Medium,
-                                  ),
+                              TextButton(
+                                onPressed: () =>
+                                    setState(() => _isExpanded = !_isExpanded),
+                                child: Text(
+                                  _isExpanded ? 'Read more..' : 'Read less',
+                                  style:
+                                      AppTextStyles
+                                          .LightPurple15Medium.copyWith(
+                                        fontSize: 15.sp,
+                                      ),
                                 ),
-                              if (_isExpanded)
-                                TextButton(
-                                  onPressed: () =>
-                                      setState(() => _isExpanded = false),
-                                  child: Text(
-                                    'Read More..',
-                                    style: AppTextStyles.LightPurple15Medium,
-                                  ),
-                                ),
+                              ),
                             ],
                           ),
                         ),
-                        // Reviews Placeholder
+
                         Padding(
                           padding: EdgeInsets.symmetric(
                             horizontal: 16.w,
@@ -361,7 +382,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ],
                     ),
                   ),
-                  // زرار Add to Cart ثابت في الأسفل
                   Positioned(
                     left: 0,
                     right: 0,
@@ -379,12 +399,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               borderRadius: BorderRadius.circular(16.r),
                             ),
                           ),
-                          onPressed: () {
-                            // UI فقط دلوقتي
-                          },
+                          onPressed: () {},
                           child: Text(
                             'Add to Cart',
-                            style: AppTextStyles.White17Medium,
+                            style: AppTextStyles.White17Medium.copyWith(
+                              fontSize: 17.sp,
+                            ),
                           ),
                         ),
                       ),
@@ -395,7 +415,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             );
           }
 
-          // Default state - should never reach here
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
