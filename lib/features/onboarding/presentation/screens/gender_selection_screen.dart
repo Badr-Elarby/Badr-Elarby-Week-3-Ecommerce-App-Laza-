@@ -29,7 +29,7 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
       // Small delay to ensure proper navigation
       await Future.delayed(const Duration(milliseconds: 100));
       if (mounted) {
-        context.go('/Home');
+        context.go('/home');
       }
     }
   }

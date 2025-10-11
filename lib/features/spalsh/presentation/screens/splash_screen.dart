@@ -24,17 +24,19 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _navigateToNextScreen() async {
-    Future.delayed(const Duration(seconds: 2), () async {
+    Future.delayed(const Duration(seconds: 5), () async {
       if (!mounted) return;
-      
+
       try {
         log('SplashScreen: Starting navigation logic');
         final authRepository = getIt<AuthRepository>();
         log('SplashScreen: AuthRepository retrieved successfully');
-        
+
         final accessToken = await authRepository.getCurrentUserToken();
-        log('SplashScreen: Access token check completed - token exists: ${accessToken != null && accessToken.isNotEmpty}');
-        
+        log(
+          'SplashScreen: Access token check completed - token exists: ${accessToken != null && accessToken.isNotEmpty}',
+        );
+
         if (accessToken != null && accessToken.isNotEmpty) {
           log('SplashScreen: Navigating to home screen');
           context.go('/home');
@@ -73,7 +75,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 baseColor: AppColors.White,
                 highlightColor: AppColors.DarkCyanGray,
                 period: const Duration(seconds: 3),
-                child: Text('WEARVA', style: AppTextStyles.White40Regular)
+                child: Text('Laza', style: AppTextStyles.White40Regular)
                     .animate()
                     .fadeIn(duration: 1000.ms, delay: 500.ms)
                     .slideY(begin: 0.5),
