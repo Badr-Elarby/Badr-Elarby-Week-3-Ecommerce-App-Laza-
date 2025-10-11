@@ -94,33 +94,33 @@ lib/
 ### 🟢 Splash & Onboarding
 | Splash | Onboarding |
 |:--:|:--:|
-| ![Splash](screenshots&demo/splash.png) | ![Onboarding](screenshots&demo/onboarding.png) |
+| ![Splash](screenshots/splash.png) | ![Onboarding](screenshots/onboarding.png) |
 
 ---
 
 ### 🔐 Authentication
 | Login | Signup |
 |:--:|:--:|
-| ![Login](screenshots&demo/login.png) | ![Signup](screenshots&demo/signup.png) |
+| ![Login](screenshots/login.png) | ![Signup](screenshots/signup.png) |
 
 ---
 
 ### 🏠 Home Screens
 | Home 1 | Home 2 | Home 3 |
 |:--:|:--:|:--:|
-| ![Home1](screenshots&demo/home0.png) | ![Home2](screenshots&demo/home1.png) | ![Home3](screenshots&demo/home2.png) |
+| ![Home1](screenshots/home0.png) | ![Home2](screenshots/home1.png) | ![Home3](screenshots/home2.png) |
 
 ---
 
 ### 💖 Favorites & Product Details
 | Favorites | Product Details |
 |:--:|:--:|
-| ![Favorites](screenshots&demo/favorite.png) | ![Product Details](screenshots&demo/ProductDetails.png) |
+| ![Favorites](screenshots/favorite.png) | ![Product Details](screenshots/ProductDetails.png) |
 
 ---
 
 ### 🛒 Cart & Order Confirmation
 | Cart | Order Confirmation |
 |:--:|:--:|
-| ![Cart](screenshots&demo/cart.png) | ![Order Confirmation](screenshots&demo/OrderConfirmation.png) |
+| ![Cart](screenshots/cart.png) | ![Order Confirmation](screenshots/OrderConfirmation.png) |
 
