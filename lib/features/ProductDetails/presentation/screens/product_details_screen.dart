@@ -1,0 +1,406 @@
+import 'dart:developer';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:laza/core/di/injection_container.dart';
+import 'package:laza/core/utils/app_colors.dart';
+import 'package:laza/core/utils/app_styles.dart';
+import 'package:laza/features/ProductDetails/presentation/cubit/product_details_cubit.dart';
+import 'package:laza/features/ProductDetails/presentation/cubit/product_details_state.dart';
+
+class ProductDetailsScreen extends StatefulWidget {
+  final String productId;
+
+  const ProductDetailsScreen({Key? key, required this.productId})
+    : super(key: key);
+
+  @override
+  State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
+}
+
+class _InfoChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+
+  const _InfoChip({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(20.r),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: AppColors.AlmostBlack),
+          SizedBox(width: 4.w),
+          Text(label, style: AppTextStyles.Gray13Regular),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
+  int selectedSize = 2;
+  final List<String> sizes = ['S', 'M', 'L', 'XL', '2XL'];
+  bool _isExpanded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    log(
+      '🛍️ [ProductDetailsScreen] Initializing with product ID: ${widget.productId}',
+    );
+    getIt<ProductDetailsCubit>().fetchProductDetails(widget.productId);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) =>
+          getIt<ProductDetailsCubit>()..fetchProductDetails(widget.productId),
+      child: BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
+        builder: (context, state) {
+          if (state is ProductDetailsLoading ||
+              state is ProductDetailsInitial) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+
+          if (state is ProductDetailsError) {
+            return Scaffold(body: Center(child: Text(state.message)));
+          }
+
+          if (state is ProductDetailsLoaded) {
+            final product = state.product;
+            log(
+              '🛍️ [ProductDetailsScreen] Building UI for product: ${product.id}',
+            );
+            return Scaffold(
+              backgroundColor: AppColors.SoftCloud,
+              appBar: AppBar(
+                backgroundColor: AppColors.White,
+                elevation: 0,
+                leading: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    color: AppColors.AlmostBlack,
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                actions: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.shopping_bag_outlined,
+                      color: AppColors.AlmostBlack,
+                    ),
+                    onPressed: () {
+                      context.push('/cart');
+                    },
+                  ),
+                ],
+              ),
+              body: Stack(
+                children: [
+                  SingleChildScrollView(
+                    padding: EdgeInsets.only(bottom: 80.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Main Product Image
+                        Center(
+                          child: product.coverPictureUrl.isNotEmpty
+                              ? Image.network(
+                                  product.coverPictureUrl,
+                                  height: 260.h,
+                                  fit: BoxFit.contain,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    log(
+                                      '🛍️ [ProductDetailsScreen] Failed to load main image: $error',
+                                    );
+                                    return Image.asset(
+                                      'assets/images/image.png',
+                                      height: 260.h,
+                                      fit: BoxFit.contain,
+                                    );
+                                  },
+                                )
+                              : Image.asset(
+                                  'assets/images/image.png',
+                                  height: 260.h,
+                                  fit: BoxFit.contain,
+                                ),
+                        ),
+                        SizedBox(height: 16.h),
+                        // Product Details Header
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    product.productCode,
+                                    style: AppTextStyles.Grey15Regular,
+                                  ),
+                                  if (product.discountPercentage > 0) ...[
+                                    const Spacer(),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 8.w,
+                                        vertical: 4.h,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppColors
+                                            .LightPurple.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(
+                                          4.r,
+                                        ),
+                                      ),
+                                      child: Text(
+                                        '${product.discountPercentage.toStringAsFixed(0)}% OFF',
+                                        style:
+                                            AppTextStyles
+                                                .Grey15Regular.copyWith(
+                                              color: AppColors.LightPurple,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                              SizedBox(height: 10.h),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      product.name,
+                                      style:
+                                          AppTextStyles.AlmostBlack22Semibold,
+                                    ),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      if (product.discountPercentage > 0)
+                                        Text(
+                                          '\$${((product.price * (100 + product.discountPercentage)) / 100).toStringAsFixed(2)}',
+                                          style:
+                                              AppTextStyles
+                                                  .Grey15Regular.copyWith(
+                                                decoration:
+                                                    TextDecoration.lineThrough,
+                                              ),
+                                        ),
+                                      Text(
+                                        '\$${product.price.toStringAsFixed(2)}',
+                                        style:
+                                            AppTextStyles
+                                                .AlmostBlack22Semibold.copyWith(
+                                              color: AppColors.LightPurple,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 12.h),
+                        // Rating and Info Section
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: Row(
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.star_rounded,
+                                    color: Colors.amber,
+                                    size: 20,
+                                  ),
+                                  SizedBox(width: 4.w),
+                                  Text(
+                                    '${product.rating.toStringAsFixed(1)} ',
+                                    style: AppTextStyles.AlmostBlack15Semibold,
+                                  ),
+                                  Text(
+                                    '(${product.reviewsCount} reviews)',
+                                    style: AppTextStyles.Grey15Regular,
+                                  ),
+                                ],
+                              ),
+                              const Spacer(),
+
+                              _InfoChip(
+                                icon: Icons.inventory_2_outlined,
+                                label: product.inStock
+                                    ? 'In Stock'
+                                    : 'Out of Stock',
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        SizedBox(height: 16.h),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Size',
+                                style: AppTextStyles.AlmostBlack15Semibold,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 8.h),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: List.generate(
+                              sizes.length,
+                              (index) => Padding(
+                                padding: EdgeInsets.only(right: 8.w),
+                                child: ChoiceChip(
+                                  label: Text(
+                                    sizes[index],
+                                    style: AppTextStyles.AlmostBlack15Semibold,
+                                  ),
+                                  selected: selectedSize == index,
+                                  selectedColor: AppColors.LightPurple,
+                                  backgroundColor: AppColors.White,
+                                  labelStyle: TextStyle(
+                                    color: selectedSize == index
+                                        ? AppColors.White
+                                        : AppColors.AlmostBlack,
+                                  ),
+                                  onSelected: (_) =>
+                                      setState(() => selectedSize = index),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 20.h),
+                        // Description
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: Text(
+                            'Description',
+                            style: AppTextStyles.AlmostBlack17Semibold,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 8.h,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                product.description,
+                                style: AppTextStyles.Grey15Regular,
+                                maxLines: _isExpanded ? null : 3,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              if (!_isExpanded)
+                                TextButton(
+                                  onPressed: () =>
+                                      setState(() => _isExpanded = true),
+                                  child: Text(
+                                    'Read Less',
+                                    style: AppTextStyles.LightPurple15Medium,
+                                  ),
+                                ),
+                              if (_isExpanded)
+                                TextButton(
+                                  onPressed: () =>
+                                      setState(() => _isExpanded = false),
+                                  child: Text(
+                                    'Read More..',
+                                    style: AppTextStyles.LightPurple15Medium,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                        // Reviews Placeholder
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 8.h,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Reviews',
+                                style: AppTextStyles.AlmostBlack17Semibold,
+                              ),
+                              Text(
+                                'View All',
+                                style: AppTextStyles.Gray13Regular,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 24.h),
+                      ],
+                    ),
+                  ),
+                  // زرار Add to Cart ثابت في الأسفل
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      color: AppColors.White,
+                      padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 16.h),
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 48.h,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.LightPurple,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16.r),
+                            ),
+                          ),
+                          onPressed: () {
+                            // UI فقط دلوقتي
+                          },
+                          child: Text(
+                            'Add to Cart',
+                            style: AppTextStyles.White17Medium,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          // Default state - should never reach here
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        },
+      ),
+    );
+  }
+}

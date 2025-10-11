@@ -20,6 +20,9 @@ import 'package:laza/features/onboarding/data/repositories/gender_repository_imp
 import 'package:laza/features/onboarding/data/repositories/gender_repository.dart';
 import 'package:laza/features/onboarding/presentation/cubits/gender_cubit/gender_cubit.dart';
 import 'package:laza/features/favorites/presentation/cubits/favorites_cubit/favorites_cubit.dart';
+import 'package:laza/features/ProductDetails/data/datasources/product_details_datasource.dart';
+import 'package:laza/features/ProductDetails/data/repositories/product_details_repository.dart';
+import 'package:laza/features/ProductDetails/presentation/cubit/product_details_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final getIt = GetIt.instance;
@@ -132,6 +135,23 @@ Future<void> setupGetIt() async {
     return cubit;
   });
   log('[DI] FavoritesCubit registered successfully');
+
+  // Product Details Feature Dependencies
+  getIt.registerLazySingleton<ProductDetailsDataSource>(
+    () => ProductDetailsDataSource(dio: getIt<Dio>()),
+  );
+  log('[DI] ProductDetailsDataSource registered');
+
+  getIt.registerLazySingleton<ProductDetailsRepository>(
+    () =>
+        ProductDetailsRepository(dataSource: getIt<ProductDetailsDataSource>()),
+  );
+  log('[DI] ProductDetailsRepository registered');
+
+  getIt.registerFactory<ProductDetailsCubit>(
+    () => ProductDetailsCubit(repository: getIt<ProductDetailsRepository>()),
+  );
+  log('[DI] ProductDetailsCubit registered');
 
   log('setupGetIt: GetIt setup completed');
 }

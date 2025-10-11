@@ -18,6 +18,7 @@ import 'package:laza/features/favorites/presentation/cubits/favorites_cubit/favo
 // ✅ Import your shell (navigation bar) widget
 import 'package:laza/features/home/presentation/screens/home_screen.dart';
 import 'package:laza/features/home/presentation/cubits/home_cubit/home_cubit.dart';
+import 'package:laza/features/ProductDetails/presentation/screens/product_details_screen.dart';
 
 class AppRouter {
   late GoRouter router;
@@ -27,6 +28,14 @@ class AppRouter {
       initialLocation: '/',
       debugLogDiagnostics: true,
       routes: [
+        // ---------------- PRODUCT DETAILS ----------------
+        GoRoute(
+          path: '/product-details/:id',
+          name: AppRoutes.productDetails,
+          builder: (context, state) =>
+              ProductDetailsScreen(productId: state.pathParameters['id']!),
+        ),
+
         // ---------------- AUTH & ONBOARDING ----------------
         GoRoute(
           path: '/',
@@ -123,4 +132,5 @@ class AppRoutes {
   static const String favorites = 'favorites';
   static const String cart = 'cart';
   static const String profile = 'profile';
+  static const String productDetails = 'productDetails';
 }
