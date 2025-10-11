@@ -44,7 +44,7 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
     return BlocListener<GenderCubit, GenderState>(
       listener: (context, state) {
         if (state is GenderSuccess) {
-          context.go('/Home');
+          context.go('/home');
         } else if (state is GenderError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message), backgroundColor: Colors.red),
