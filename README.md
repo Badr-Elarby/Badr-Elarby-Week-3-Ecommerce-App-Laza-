@@ -3,8 +3,10 @@
 
 Laza is a stylish and modern e-commerce mobile application built with Flutter. It provides a seamless shopping experience for users to browse, favorite, and purchase fashion products. The app features a clean user interface, robust state management, and a feature-rich, scalable architecture.
 
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
 For a deeper understanding of the project — including detailed diagrams and an in-depth breakdown of each layer and feature —  
 **[click here](https://deepwiki.com/Badr-Elarby/Badr-Elarby-Week-3-Ecommerce-App-Laza-/2.1-clean-architecture-and-layered-design)**.
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
 
 
 ## Key Features
