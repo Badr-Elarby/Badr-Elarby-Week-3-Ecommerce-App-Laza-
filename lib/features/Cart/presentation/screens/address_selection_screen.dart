@@ -33,6 +33,8 @@ class AddressSelectionScreen extends StatefulWidget {
 
 class _AddressSelectionScreenState extends State<AddressSelectionScreen> {
   final Completer<GoogleMapController> _controller = Completer();
+  final TextEditingController _searchController = TextEditingController();
+
   Marker? _pickedMarker;
   CameraPosition _initialCamera = const CameraPosition(
     target: LatLng(30.0444, 31.2357), // Cairo as fallback
@@ -42,18 +44,9 @@ class _AddressSelectionScreenState extends State<AddressSelectionScreen> {
   String _addressText = '';
 
   @override
-  void initState() {
-    super.initState();
-    _determinePosition()
-        .then((pos) {
-          if (!mounted) return;
-          _moveCamera(LatLng(pos.latitude, pos.longitude));
-          _setMarker(LatLng(pos.latitude, pos.longitude));
-          _reverseGeocode(pos.latitude, pos.longitude);
-        })
-        .catchError((_) {
-          // keep fallback
-        });
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _moveCamera(LatLng target) async {
@@ -80,7 +73,7 @@ class _AddressSelectionScreenState extends State<AddressSelectionScreen> {
           p.locality,
           p.administrativeArea,
           p.country,
-        ].where((s) => s != null && s!.isNotEmpty).join(', ');
+        ].where((s) => s != null && s.isNotEmpty).join(', ');
         setState(() {
           _addressText = formatted;
         });
@@ -120,7 +113,58 @@ class _AddressSelectionScreenState extends State<AddressSelectionScreen> {
 
   void _onMapTap(LatLng pos) async {
     _setMarker(pos);
+    _searchController.clear();
     await _reverseGeocode(pos.latitude, pos.longitude);
+  }
+
+  void _onGPSPressed() async {
+    try {
+      final pos = await _determinePosition();
+      final latLng = LatLng(pos.latitude, pos.longitude);
+      await _moveCamera(latLng);
+      _setMarker(latLng);
+      _searchController.clear();
+      _reverseGeocode(latLng.latitude, latLng.longitude);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Could not determine location: ${e.toString()}'),
+          ),
+        );
+      }
+    }
+  }
+
+  void _onAddressSearchSubmitted(String query) async {
+    if (query.isEmpty) return;
+
+    try {
+      setState(() => _loading = true);
+      final locations = await locationFromAddress(query);
+
+      if (locations.isNotEmpty) {
+        final location = locations.first;
+        final latLng = LatLng(location.latitude, location.longitude);
+        await _moveCamera(latLng);
+        _setMarker(latLng);
+        await _reverseGeocode(location.latitude, location.longitude);
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Address not found')));
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+      }
+    } finally {
+      setState(() => _loading = false);
+    }
   }
 
   void _confirm() {
@@ -141,6 +185,7 @@ class _AddressSelectionScreenState extends State<AddressSelectionScreen> {
       appBar: AppBar(title: const Text('Select Delivery Location')),
       body: Stack(
         children: [
+          // Google Map
           GoogleMap(
             initialCameraPosition: _initialCamera,
             onMapCreated: (controller) => _controller.complete(controller),
@@ -149,6 +194,59 @@ class _AddressSelectionScreenState extends State<AddressSelectionScreen> {
             myLocationEnabled: true,
             myLocationButtonEnabled: true,
           ),
+
+          // Search TextField at top
+          Positioned(
+            top: 16,
+            left: 16,
+            right: 16,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                  ),
+                ],
+              ),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Search address',
+                  prefixIcon: const Icon(Icons.search),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 12,
+                  ),
+                ),
+                onSubmitted: (query) {
+                  if (query.isNotEmpty) {
+                    _onAddressSearchSubmitted(query);
+                  }
+                },
+              ),
+            ),
+          ),
+
+          // Floating GPS Button (bottom-right)
+          Positioned(
+            right: 16,
+            bottom: 120,
+            child: FloatingActionButton(
+              onPressed: _onGPSPressed,
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.blue,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.gps_fixed),
+            ),
+          ),
+
+          // Selected Address Card + Confirm Button (bottom)
           Positioned(
             left: 16,
             right: 16,
@@ -168,7 +266,7 @@ class _AddressSelectionScreenState extends State<AddressSelectionScreen> {
                                 ? _addressText
                                 : (_pickedMarker != null
                                       ? '${_pickedMarker!.position.latitude.toStringAsFixed(5)}, ${_pickedMarker!.position.longitude.toStringAsFixed(5)}'
-                                      : 'Tap map to pick location or use GPS'),
+                                      : 'Tap map to pick location or search address'),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -177,53 +275,6 @@ class _AddressSelectionScreenState extends State<AddressSelectionScreen> {
                         ElevatedButton(
                           onPressed: _confirm,
                           child: const Text('Confirm'),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        TextButton.icon(
-                          onPressed: () async {
-                            try {
-                              final pos = await _determinePosition();
-                              final latLng = LatLng(
-                                pos.latitude,
-                                pos.longitude,
-                              );
-                              await _moveCamera(latLng);
-                              _setMarker(latLng);
-                              _reverseGeocode(
-                                latLng.latitude,
-                                latLng.longitude,
-                              );
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Could not determine location: ${e.toString()}',
-                                  ),
-                                ),
-                              );
-                            }
-                          },
-                          icon: const Icon(Icons.gps_fixed),
-                          label: const Text('Use GPS'),
-                        ),
-                        const SizedBox(width: 8),
-                        TextButton.icon(
-                          onPressed: () async {
-                            // Manual selection hint: user can tap the map
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Tap on the map to select your delivery location',
-                                ),
-                              ),
-                            );
-                          },
-                          icon: const Icon(Icons.map),
-                          label: const Text('Select on Map'),
                         ),
                       ],
                     ),

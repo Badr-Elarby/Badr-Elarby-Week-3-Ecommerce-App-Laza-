@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:laza/core/routing/app_router.dart';
 import 'package:laza/core/utils/app_colors.dart';
 import 'package:laza/core/utils/app_styles.dart';
 
@@ -20,7 +19,10 @@ class OrderConfirmationScreen extends StatelessWidget {
             Icons.arrow_back_ios_new_rounded,
             color: AppColors.AlmostBlack,
           ),
-          onPressed: () => context.go(AppRoutes.home),
+          onPressed: () {
+            // Use go() with explicit route path to properly navigate to shell route
+            context.go('/home');
+          },
         ),
       ),
       body: Padding(
@@ -83,7 +85,8 @@ class OrderConfirmationScreen extends StatelessWidget {
           height: 60.h,
           child: ElevatedButton(
             onPressed: () {
-              context.go(AppRoutes.home);
+              // Use go() with explicit route path to properly navigate to shell route
+              context.go('/home');
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.LightPurple,
