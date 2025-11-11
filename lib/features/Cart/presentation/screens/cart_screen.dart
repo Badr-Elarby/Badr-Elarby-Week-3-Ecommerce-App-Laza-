@@ -18,6 +18,7 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   late final CartCubit _cartCubit;
+  Map<String, dynamic>? _selectedAddress;
 
   @override
   void initState() {
@@ -51,7 +52,7 @@ class _CartScreenState extends State<CartScreen> {
               if (Navigator.of(context).canPop()) {
                 context.pop();
               } else {
-                context.go('/home');
+                context.pushNamed(AppRoutes.home);
               }
             },
           ),
@@ -112,7 +113,7 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                     SizedBox(height: 24.h),
                     ElevatedButton(
-                      onPressed: () => context.go(AppRoutes.home),
+                      onPressed: () => context.pushNamed(AppRoutes.home),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.LightPurple,
                         shape: RoundedRectangleBorder(
@@ -146,6 +147,74 @@ class _CartScreenState extends State<CartScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Selected delivery address (appears above checkout if present)
+          if (_selectedAddress != null) ...[
+            Card(
+              margin: EdgeInsets.only(top: 12.h, bottom: 12.h),
+              child: Padding(
+                padding: EdgeInsets.all(12.w),
+                child: Row(
+                  children: [
+                    const Icon(Icons.location_on),
+                    SizedBox(width: 8.w),
+                    Expanded(
+                      child: Text(
+                        _selectedAddress!['address'] ??
+                            '${_selectedAddress!['latitude']}, ${_selectedAddress!['longitude']}',
+                        style: AppTextStyles.AlmostBlack15Semibold,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        // Edit/address selection
+                        final result = await context.push('/select-address');
+                        if (result != null && result is Map<String, dynamic>) {
+                          setState(() {
+                            _selectedAddress = result;
+                          });
+                        }
+                      },
+                      child: Text('Change'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ] else ...[
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.h),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'No delivery address set',
+                      style: AppTextStyles.Grey15Regular,
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final result = await context.push('/select-address');
+                      if (result != null && result is Map<String, dynamic>) {
+                        setState(() {
+                          _selectedAddress = result;
+                        });
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.LightPurple,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.r),
+                      ),
+                    ),
+                    child: Text(
+                      'Add Address',
+                      style: AppTextStyles.White17Medium,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
           // Cart Items
           Expanded(
             child: ListView.builder(
@@ -320,11 +389,18 @@ class _CartScreenState extends State<CartScreen> {
             width: double.infinity,
             height: 60.h,
             child: ElevatedButton(
-              onPressed: () {
-                context.pushNamed('OrderConfirmationScreen');
-              },
+              onPressed: _selectedAddress == null
+                  ? null
+                  : () async {
+                      // address exists — proceed to order confirmation
+                      context.pushNamed('OrderConfirmationScreen');
+                    },
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.LightPurple,
+                backgroundColor: _selectedAddress == null
+                    ? Colors.grey.shade400
+                    : AppColors.LightPurple,
+                disabledBackgroundColor: Colors.grey.shade400,
+                disabledForegroundColor: Colors.grey.shade600,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16.r),
                 ),

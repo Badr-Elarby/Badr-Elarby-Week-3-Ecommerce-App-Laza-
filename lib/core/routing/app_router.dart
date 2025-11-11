@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:laza/core/di/injection_container.dart';
 import 'package:laza/core/routing/app_shell.dart';
 import 'package:laza/features/Cart/presentation/screens/order_confirmation_screen.dart';
+import 'package:laza/features/Cart/presentation/screens/address_selection_screen.dart';
 import 'package:laza/features/auth/presentation/screens/confirm_code.dart';
 import 'package:laza/features/auth/presentation/screens/forget_password.dart';
 import 'package:laza/features/auth/presentation/screens/login_screen.dart';
@@ -83,6 +84,18 @@ class AppRouter {
           ),
         ),
 
+        // Standalone routes (not in shell) for address selection and order confirmation
+        GoRoute(
+          path: '/select-address',
+          name: AppRoutes.selectAddress,
+          builder: (context, state) => const AddressSelectionScreen(),
+        ),
+        GoRoute(
+          path: '/OrderConfirmationScreen',
+          name: AppRoutes.OrderConfirmationScreen,
+          builder: (context, state) => const OrderConfirmationScreen(),
+        ),
+
         // ---------------- SHELL ROUTE (for main app navigation) ----------------
         ShellRoute(
           builder: (context, state, child) {
@@ -112,11 +125,6 @@ class AppRouter {
               name: AppRoutes.cart,
               builder: (context, state) => const CartScreen(),
             ),
-            GoRoute(
-              path: '/OrderConfirmationScreen',
-              name: AppRoutes.OrderConfirmationScreen,
-              builder: (context, state) => const OrderConfirmationScreen(),
-            ),
           ],
         ),
       ],
@@ -140,4 +148,5 @@ class AppRoutes {
   static const String profile = 'profile';
   static const String productDetails = 'productDetails';
   static const String OrderConfirmationScreen = 'OrderConfirmationScreen';
+  static const String selectAddress = 'selectAddress';
 }

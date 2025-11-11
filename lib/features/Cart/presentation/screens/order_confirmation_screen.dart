@@ -20,7 +20,7 @@ class OrderConfirmationScreen extends StatelessWidget {
             Icons.arrow_back_ios_new_rounded,
             color: AppColors.AlmostBlack,
           ),
-          onPressed: () => context.pop(),
+          onPressed: () => context.go(AppRoutes.home),
         ),
       ),
       body: Padding(
