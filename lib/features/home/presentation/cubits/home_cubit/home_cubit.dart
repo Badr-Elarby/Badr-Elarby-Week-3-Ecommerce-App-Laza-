@@ -11,16 +11,18 @@ class HomeCubit extends Cubit<HomeState> {
   final HomeRepository _homeRepository;
   final SharedPreferences _prefs;
   static const String _favoritesKey = 'favorites';
+  static const int _defaultPageSize = 20; // Number of products per page
 
   HomeCubit(this._homeRepository, this._prefs) : super(HomeInitial());
 
+  /// Loads the first page of products (initial load)
   Future<void> getProducts({int? page, int? pageSize}) async {
-    print('HomeCubit: Loading products...');
+    print('HomeCubit: Loading products (page: ${page ?? 1})...');
     emit(HomeLoading());
     try {
       final response = await _homeRepository.getProducts(
-        page: page,
-        pageSize: pageSize,
+        page: page ?? 1,
+        pageSize: pageSize ?? _defaultPageSize,
       );
 
       // Update products with favorite status
@@ -30,10 +32,59 @@ class HomeCubit extends Cubit<HomeState> {
       }).toList();
 
       print('HomeCubit: Loaded ${products.length} products successfully');
-      emit(HomeSuccess(products));
+      emit(HomeSuccess(
+        products: products,
+        hasMorePages: response.hasNextPage,
+        currentPage: response.page,
+      ));
     } catch (e) {
       print('HomeCubit: Error loading products: $e');
       emit(HomeError(e.toString()));
+    }
+  }
+
+  /// Loads the next page of products and appends to existing list (pagination)
+  Future<void> loadNextPage() async {
+    final currentState = state;
+    if (currentState is! HomeSuccess) return;
+
+    // Prevent duplicate requests
+    if (currentState.isLoadingMore || !currentState.hasMorePages) {
+      return;
+    }
+
+    final nextPage = currentState.currentPage + 1;
+    print('HomeCubit: Loading next page ($nextPage)...');
+
+    // Emit loading more state
+    emit(currentState.copyWith(isLoadingMore: true));
+
+    try {
+      final response = await _homeRepository.getProducts(
+        page: nextPage,
+        pageSize: _defaultPageSize,
+      );
+
+      // Update new products with favorite status
+      final newProducts = response.items.map((product) {
+        final isFavorite = _isFavorite(product.id);
+        return product.copyWith(isLiked: isFavorite);
+      }).toList();
+
+      // Append new products to existing list
+      final allProducts = [...currentState.products, ...newProducts];
+
+      print('HomeCubit: Loaded ${newProducts.length} more products (total: ${allProducts.length})');
+      emit(HomeSuccess(
+        products: allProducts,
+        hasMorePages: response.hasNextPage,
+        isLoadingMore: false,
+        currentPage: nextPage,
+      ));
+    } catch (e) {
+      print('HomeCubit: Error loading next page: $e');
+      // Revert to previous state on error
+      emit(currentState.copyWith(isLoadingMore: false));
     }
   }
 
@@ -60,8 +111,8 @@ class HomeCubit extends Cubit<HomeState> {
           return p;
         }).toList();
 
-        // Emit updated state to reflect changes in UI immediately
-        emit(HomeSuccess(updatedProducts));
+        // Emit updated state with pagination info preserved
+        emit(currentState.copyWith(products: updatedProducts));
         print(
           'HomeCubit: Toggled favorite for product ${product.id} (isFavorite: ${!isFavorite})',
         );

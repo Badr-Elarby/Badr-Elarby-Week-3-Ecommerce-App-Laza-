@@ -37,12 +37,13 @@ class _SplashScreenState extends State<SplashScreen> {
           'SplashScreen: Access token check completed - token exists: ${accessToken != null && accessToken.isNotEmpty}',
         );
 
+        if (!mounted) return;
         if (accessToken != null && accessToken.isNotEmpty) {
           log('SplashScreen: Navigating to home screen');
-          context.go('/home');
+          if (mounted) context.go('/home');
         } else {
           log('SplashScreen: Navigating to login screen');
-          context.go('/login');
+          if (mounted) context.go('/login');
         }
       } catch (e) {
         log('SplashScreen: Error during navigation: $e');

@@ -33,6 +33,8 @@ class FavoriteProductCard extends StatelessWidget {
                   height: 160,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  // Enable caching for better performance
+                  cacheWidth: 300, // Optimize memory usage
                   errorBuilder: (context, error, stackTrace) {
                     return Image.asset(
                       'assets/images/image.png',

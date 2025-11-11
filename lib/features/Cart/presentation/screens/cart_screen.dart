@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:laza/core/di/injection_container.dart';
 import 'package:laza/core/routing/app_router.dart';
+import 'package:laza/features/Payment/data/services/paymob_service.dart';
 import 'package:laza/core/utils/app_colors.dart';
 import 'package:laza/core/utils/app_styles.dart';
 import 'package:laza/features/Cart/presentation/cubits/cart_cubit.dart';
@@ -28,11 +29,8 @@ class _CartScreenState extends State<CartScreen> {
     _cartCubit.loadCartItems();
   }
 
-  @override
-  void dispose() {
-    _cartCubit.close();
-    super.dispose();
-  }
+  // Note: CartCubit is managed by DI as a factory, so we don't dispose it here
+  // The cubit will be disposed automatically when no longer referenced
 
   @override
   Widget build(BuildContext context) {
@@ -112,19 +110,6 @@ class _CartScreenState extends State<CartScreen> {
                       style: AppTextStyles.Grey15Regular,
                     ),
                     SizedBox(height: 24.h),
-                    ElevatedButton(
-                      onPressed: () => context.pushNamed(AppRoutes.home),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.LightPurple,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16.r),
-                        ),
-                      ),
-                      child: Text(
-                        'Continue Shopping',
-                        style: AppTextStyles.White17Medium,
-                      ),
-                    ),
                   ],
                 ),
               );
@@ -194,6 +179,7 @@ class _CartScreenState extends State<CartScreen> {
                   ElevatedButton(
                     onPressed: () async {
                       final result = await context.push('/select-address');
+                      if (!mounted) return;
                       if (result != null && result is Map<String, dynamic>) {
                         setState(() {
                           _selectedAddress = result;
@@ -219,9 +205,11 @@ class _CartScreenState extends State<CartScreen> {
           Expanded(
             child: ListView.builder(
               itemCount: state.cartItems.length,
+              // Add key for better list performance
               itemBuilder: (context, index) {
                 final item = state.cartItems[index];
                 return Container(
+                  key: ValueKey('cart_item_${item.productId}_${item.quantity}'),
                   margin: EdgeInsets.only(top: 16.h),
                   padding: EdgeInsets.all(12.w),
                   decoration: BoxDecoration(
@@ -238,6 +226,8 @@ class _CartScreenState extends State<CartScreen> {
                                 width: 64.w,
                                 height: 64.w,
                                 fit: BoxFit.cover,
+                                // Enable caching for better performance
+                                cacheWidth: 128, // Optimize for small thumbnail
                                 errorBuilder: (context, error, stackTrace) {
                                   return Image.asset(
                                     'assets/images/image.png',
@@ -392,8 +382,74 @@ class _CartScreenState extends State<CartScreen> {
               onPressed: _selectedAddress == null
                   ? null
                   : () async {
-                      // address exists — proceed to order confirmation
-                      context.pushNamed('OrderConfirmationScreen');
+                      // Begin Paymob flow
+                      final paymob = getIt<PaymobService>();
+                      final messenger = ScaffoldMessenger.of(context);
+                      final goRouter = GoRouter.of(context);
+                      try {
+                        messenger.showSnackBar(
+                          const SnackBar(content: Text('Preparing payment...')),
+                        );
+
+                        final authToken = await paymob.getAuthToken();
+                        final amountCents = ((state.totalAmount + 10.0) * 100)
+                            .toInt();
+
+                        final orderResp = await paymob.registerOrder(
+                          amountCents: amountCents,
+                          authToken: authToken,
+                        );
+
+                        // Paymob order id comes as "id" in response
+                        final orderId = orderResp['id'] is int
+                            ? orderResp['id'] as int
+                            : int.tryParse(orderResp['id'].toString()) ?? 0;
+
+                        final billing = {
+                          'first_name': 'Customer',
+                          'last_name': 'Name',
+                          'email': 'customer@example.com',
+                          'phone_number': '01000000000',
+                          'city': 'Cairo',
+                          'country': 'EG',
+                          'street': _selectedAddress?['address'] ?? '',
+                          'building': '12', // أضف رقم مبنى تجريبي
+                          'floor': '3', // لازم
+                          'apartment': '5', // لازم
+                          'postal_code': '00000',
+                          'state': 'Cairo', // اختياري لكن مفضل
+                        };
+
+                        final paymentKey = await paymob.requestPaymentKey(
+                          amountCents: amountCents,
+                          orderId: orderId,
+                          billingData: billing,
+                          authToken: authToken,
+                        );
+
+                        final iframeUrl = paymob.buildIframeUrl(paymentKey);
+
+                        // Use GoRouter to push the WebView (stays in GoRouter tree)
+                        final result = await goRouter.push<bool>(
+                          '/paymob-webview',
+                          extra: iframeUrl,
+                        );
+                        if (!mounted) return;
+                        if (result == true) {
+                          goRouter.push('/OrderConfirmationScreen');
+                        } else {
+                          messenger.showSnackBar(
+                            const SnackBar(
+                              content: Text('Payment cancelled or failed'),
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        if (!mounted) return;
+                        messenger.showSnackBar(
+                          SnackBar(content: Text('Payment error: $e')),
+                        );
+                      }
                     },
               style: ElevatedButton.styleFrom(
                 backgroundColor: _selectedAddress == null

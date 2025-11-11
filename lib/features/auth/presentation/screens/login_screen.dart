@@ -44,6 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
           listener: (context, state) {
             log('LoginCubit listener called with state: $state');
             if (state is LoginSuccess) {
+              if (!context.mounted) return;
               ScaffoldMessenger.of(
                 context,
               ).showSnackBar(SnackBar(content: Text(state.message)));
@@ -53,6 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
               final savedGender = localStorage.getGender();
               log('LoginScreen: Checking saved gender: $savedGender');
 
+              if (!context.mounted) return;
               if (savedGender != null) {
                 log('LoginScreen: Gender found, navigating to home');
                 context.go('/home');
@@ -63,6 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 context.go('/gender-selection');
               }
             } else if (state is LoginFailure) {
+              if (!context.mounted) return;
               ScaffoldMessenger.of(
                 context,
               ).showSnackBar(SnackBar(content: Text(state.error)));

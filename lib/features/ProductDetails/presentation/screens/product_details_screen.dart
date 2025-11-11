@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:laza/core/di/injection_container.dart';
 import 'package:laza/core/utils/app_colors.dart';
 import 'package:laza/core/utils/app_styles.dart';
 import 'package:laza/features/ProductDetails/presentation/cubit/product_details_cubit.dart';
 import 'package:laza/features/ProductDetails/presentation/cubit/product_details_state.dart';
 import 'package:laza/features/Cart/data/services/cart_service.dart';
+import 'package:laza/core/routing/app_router.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final String productId;
@@ -60,15 +60,17 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     log(
       '🛍️ [ProductDetailsScreen] Initializing with product ID: ${widget.productId}',
     );
-    getIt<ProductDetailsCubit>().fetchProductDetails(widget.productId);
+    // Fetch product details - BlocProvider is provided by router
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<ProductDetailsCubit>().fetchProductDetails(widget.productId);
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          getIt<ProductDetailsCubit>()..fetchProductDetails(widget.productId),
-      child: BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
+    return BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
         builder: (context, state) {
           if (state is ProductDetailsLoading ||
               state is ProductDetailsInitial) {
@@ -110,7 +112,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       color: AppColors.AlmostBlack,
                       size: 22.sp,
                     ),
-                    onPressed: () => context.pushNamed('cart'),
+                    onPressed: () => context.pushNamed(AppRoutes.cart),
                   ),
                 ],
               ),
@@ -129,6 +131,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   width: 1.sw,
                                   height: 260.h,
                                   fit: BoxFit.cover,
+                                  // Enable caching for better performance
+                                  cacheWidth: (1.sw * 2).toInt(), // High quality for detail view
                                   errorBuilder: (context, error, stackTrace) {
                                     log(
                                       '🛍️ [ProductDetailsScreen] Failed to load main image: $error',
@@ -457,7 +461,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             body: Center(child: CircularProgressIndicator()),
           );
         },
-      ),
     );
   }
 }

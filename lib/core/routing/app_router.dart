@@ -5,6 +5,7 @@ import 'package:laza/core/di/injection_container.dart';
 import 'package:laza/core/routing/app_shell.dart';
 import 'package:laza/features/Cart/presentation/screens/order_confirmation_screen.dart';
 import 'package:laza/features/Cart/presentation/screens/address_selection_screen.dart';
+import 'package:laza/features/Payment/presentation/screens/paymob_webview_screen.dart';
 import 'package:laza/features/auth/presentation/screens/confirm_code.dart';
 import 'package:laza/features/auth/presentation/screens/forget_password.dart';
 import 'package:laza/features/auth/presentation/screens/login_screen.dart';
@@ -21,6 +22,7 @@ import 'package:laza/features/favorites/presentation/cubits/favorites_cubit/favo
 import 'package:laza/features/home/presentation/screens/home_screen.dart';
 import 'package:laza/features/home/presentation/cubits/home_cubit/home_cubit.dart';
 import 'package:laza/features/ProductDetails/presentation/screens/product_details_screen.dart';
+import 'package:laza/features/ProductDetails/presentation/cubit/product_details_cubit.dart';
 
 class AppRouter {
   late GoRouter router;
@@ -30,12 +32,16 @@ class AppRouter {
       initialLocation: '/',
       debugLogDiagnostics: true,
       routes: [
-        // ---------------- PRODUCT DETAILS ----------------
+        // ---------------- PRODUCT DETAILS (outside shell - no bottom nav) ----
         GoRoute(
           path: '/product-details/:id',
           name: AppRoutes.productDetails,
-          builder: (context, state) =>
-              ProductDetailsScreen(productId: state.pathParameters['id']!),
+          builder: (context, state) => BlocProvider(
+            create: (context) => getIt<ProductDetailsCubit>(),
+            child: ProductDetailsScreen(
+              productId: state.pathParameters['id']!,
+            ),
+          ),
         ),
 
         // ---------------- AUTH & ONBOARDING ----------------
@@ -95,6 +101,19 @@ class AppRouter {
           name: AppRoutes.OrderConfirmationScreen,
           builder: (context, state) => const OrderConfirmationScreen(),
         ),
+        GoRoute(
+          path: '/paymob-webview',
+          name: AppRoutes.paymobWebview,
+          builder: (context, state) {
+            final iframeUrl = state.extra as String?;
+            if (iframeUrl == null) {
+              return const Scaffold(
+                body: Center(child: Text('Invalid payment URL')),
+              );
+            }
+            return PaymobWebViewScreen(iframeUrl: iframeUrl);
+          },
+        ),
 
         // ---------------- SHELL ROUTE (for main app navigation) ----------------
         ShellRoute(
@@ -125,6 +144,19 @@ class AppRouter {
               name: AppRoutes.cart,
               builder: (context, state) => const CartScreen(),
             ),
+            // Profile route placeholder (inside shell to show bottom nav)
+            GoRoute(
+              path: '/profile',
+              name: AppRoutes.profile,
+              builder: (context, state) => Scaffold(
+                appBar: AppBar(
+                  title: const Text('Profile'),
+                ),
+                body: const Center(
+                  child: Text('Profile screen coming soon'),
+                ),
+              ),
+            ),
           ],
         ),
       ],
@@ -148,5 +180,6 @@ class AppRoutes {
   static const String profile = 'profile';
   static const String productDetails = 'productDetails';
   static const String OrderConfirmationScreen = 'OrderConfirmationScreen';
+  static const String paymobWebview = 'paymobWebview';
   static const String selectAddress = 'selectAddress';
 }

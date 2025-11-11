@@ -44,11 +44,15 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
     return BlocListener<GenderCubit, GenderState>(
       listener: (context, state) {
         if (state is GenderSuccess) {
-          context.go('/home');
+          if (context.mounted) {
+            context.go('/home');
+          }
         } else if (state is GenderError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
-          );
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+            );
+          }
         }
       },
       child: BlocBuilder<GenderCubit, GenderState>(
@@ -177,7 +181,11 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
                               TextButton(
                                 onPressed: state is GenderLoading
                                     ? null
-                                    : () => context.go('/home'),
+                                    : () {
+                                        if (context.mounted) {
+                                          context.go('/home');
+                                        }
+                                      },
                                 child: Text(
                                   'Skip',
                                   style: AppTextStyles.Grey17Medium,

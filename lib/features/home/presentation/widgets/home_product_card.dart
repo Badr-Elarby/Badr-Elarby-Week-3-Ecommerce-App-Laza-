@@ -8,6 +8,7 @@ import 'package:laza/core/di/injection_container.dart';
 import 'package:laza/features/favorites/presentation/cubits/favorites_cubit/favorites_cubit.dart';
 import 'package:laza/features/favorites/presentation/cubits/favorites_cubit/favorites_state.dart';
 import 'package:laza/features/home/data/models/product_model.dart';
+import 'package:laza/core/routing/app_router.dart';
 
 class HomeProductCard extends StatelessWidget {
   final ProductModel product;
@@ -23,7 +24,10 @@ class HomeProductCard extends StatelessWidget {
         log(
           '🏠 [HomeProductCard] Navigating to product details: ${product.id}',
         );
-        context.pushNamed('productDetails', pathParameters: {'id': product.id});
+        context.pushNamed(
+          AppRoutes.productDetails,
+          pathParameters: {'id': product.id},
+        );
       },
       child: Container(
         decoration: BoxDecoration(
@@ -54,6 +58,8 @@ class HomeProductCard extends StatelessWidget {
                         ? Image.network(
                             product.coverPictureUrl,
                             fit: BoxFit.cover,
+                            // Enable caching for better performance
+                            cacheWidth: 300, // Optimize memory usage
                             loadingBuilder: (context, child, loadingProgress) {
                               if (loadingProgress == null) return child;
                               return Container(

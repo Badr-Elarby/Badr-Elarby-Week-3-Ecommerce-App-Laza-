@@ -139,21 +139,23 @@ class _BottomNavBarState extends State<BottomNavBar> {
   }
 
   void _onItemTapped(int index) {
+    if (!mounted) return;
     setState(() {
       _selectedIndex = index;
     });
+    // Use context.go for absolute navigation within shell routes
     switch (index) {
       case 0:
-        GoRouter.of(context).go('/home');
+        context.go('/home');
         break;
       case 1:
-        GoRouter.of(context).go('/favorites');
+        context.go('/favorites');
         break;
       case 2:
-        GoRouter.of(context).go('/cart');
+        context.go('/cart');
         break;
       case 3:
-        GoRouter.of(context).go('/profile');
+        context.go('/profile');
         break;
     }
   }

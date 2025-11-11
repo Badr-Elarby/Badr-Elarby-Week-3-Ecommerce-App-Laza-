@@ -10,6 +10,7 @@ import 'package:laza/core/utils/string_extension.dart';
 import 'package:laza/features/home/presentation/cubits/home_cubit/home_cubit.dart';
 import 'package:laza/features/home/presentation/widgits/BrandCard.dart';
 import 'package:laza/features/home/presentation/widgets/home_product_card.dart';
+import 'package:laza/core/routing/app_router.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -20,6 +21,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late final HomeCubit _homeCubit;
+  late final ScrollController _scrollController;
   String? _selectedCategory;
 
   final List<String> _categories = ['adidas', 'nike', 'fila', 'puma', 'others'];
@@ -28,7 +30,28 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _homeCubit = getIt<HomeCubit>();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_onScroll);
     _homeCubit.getProducts();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  /// Detects when user scrolls near bottom and loads next page
+  void _onScroll() {
+    // Safety check: ensure scroll controller is attached and has valid position
+    if (!_scrollController.hasClients) return;
+    
+    final position = _scrollController.position;
+    if (position.pixels >= position.maxScrollExtent * 0.8) {
+      // Load more when 80% scrolled
+      _homeCubit.loadNextPage();
+    }
   }
 
   List<dynamic> _filterProducts(List<dynamic> products) {
@@ -136,6 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   // Main Content
                   Expanded(
                     child: SingleChildScrollView(
+                      controller: _scrollController, // Attach scroll controller for pagination
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16.w),
                         child: Column(
@@ -245,28 +269,51 @@ class _HomeScreenState extends State<HomeScreen> {
                               style: AppTextStyles.AlmostBlack17Medium,
                             ),
                             SizedBox(height: 15.h),
-                            GridView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              padding: EdgeInsets.symmetric(horizontal: 16.w),
-                              itemCount: _filterProducts(state.products).length,
-                              gridDelegate: ProductGridConfig.gridDelegate,
-                              itemBuilder: (context, index) {
-                                final filteredProducts = _filterProducts(
-                                  state.products,
-                                );
-                                final product = filteredProducts[index];
-                                return GestureDetector(
-                                  onTap: () {
-                                    context.pushNamed(
-                                      'productDetails',
-                                      pathParameters: {'id': product.id},
+                            Builder(
+                              builder: (context) {
+                                // Calculate filtered products once per build
+                                final filteredProducts = _filterProducts(state.products);
+                                return GridView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                                  itemCount: filteredProducts.length,
+                                  gridDelegate: ProductGridConfig.gridDelegate,
+                                  itemBuilder: (context, index) {
+                                    final product = filteredProducts[index];
+                                    return GestureDetector(
+                                      key: ValueKey('product_${product.id}'),
+                                      onTap: () {
+                                        context.pushNamed(
+                                          AppRoutes.productDetails,
+                                          pathParameters: {'id': product.id},
+                                        );
+                                      },
+                                      child: HomeProductCard(product: product),
                                     );
                                   },
-                                  child: HomeProductCard(product: product),
                                 );
                               },
                             ),
+                            // Loading indicator for pagination
+                            if (state.isLoadingMore)
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 24.h),
+                                child: const Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                            // End of list indicator
+                            if (!state.hasMorePages && state.products.isNotEmpty)
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 24.h),
+                                child: Center(
+                                  child: Text(
+                                    'No more products',
+                                    style: AppTextStyles.Grey15Regular,
+                                  ),
+                                ),
+                              ),
                             SizedBox(height: 24.h),
                           ],
                         ),

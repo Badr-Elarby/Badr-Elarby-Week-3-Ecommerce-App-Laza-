@@ -20,8 +20,8 @@ class OrderConfirmationScreen extends StatelessWidget {
             color: AppColors.AlmostBlack,
           ),
           onPressed: () {
-            // Use go() with explicit route path to properly navigate to shell route
-            context.go('/home');
+            // Pop back using GoRouter to maintain proper nav stack
+            context.pop();
           },
         ),
       ),
@@ -85,8 +85,8 @@ class OrderConfirmationScreen extends StatelessWidget {
           height: 60.h,
           child: ElevatedButton(
             onPressed: () {
-              // Use go() with explicit route path to properly navigate to shell route
-              context.go('/home');
+              // Pop back to cart/home (OrderConfirmation was pushed via GoRouter)
+              context.pop();
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.LightPurple,

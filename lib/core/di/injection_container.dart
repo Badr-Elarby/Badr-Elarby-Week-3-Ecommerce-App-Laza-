@@ -25,6 +25,7 @@ import 'package:laza/features/ProductDetails/data/repositories/product_details_r
 import 'package:laza/features/ProductDetails/presentation/cubit/product_details_cubit.dart';
 import 'package:laza/features/Cart/data/repositories/cart_repository.dart';
 import 'package:laza/features/Cart/data/services/cart_service.dart';
+import 'package:laza/features/Payment/data/services/paymob_service.dart';
 import 'package:laza/features/Cart/presentation/cubits/cart_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -165,6 +166,13 @@ Future<void> setupGetIt() async {
   // Initialize CartService
   CartService().initialize(getIt<CartRepository>());
   log('[DI] CartService initialized');
+
+  // Paymob Payment Service
+  getIt.registerLazySingleton<PaymobService>(() {
+    log('[DI] Registering PaymobService');
+    return PaymobService(dio: Dio());
+  });
+  log('[DI] PaymobService registered');
 
   getIt.registerFactory<CartCubit>(() => CartCubit(getIt<CartRepository>()));
   log('[DI] CartCubit registered');

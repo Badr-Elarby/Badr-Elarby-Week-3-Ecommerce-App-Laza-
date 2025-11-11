@@ -8,6 +8,14 @@ class AppShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: child, bottomNavigationBar: const BottomNavBar());
+    // Wrap bottom nav bar in SafeArea to prevent overlap with system navigation buttons
+    return Scaffold(
+      body: child,
+      bottomNavigationBar: const SafeArea(
+        top: false,
+        bottom: true, // Ensure bottom nav respects system gesture bars
+        child: BottomNavBar(),
+      ),
+    );
   }
 }
