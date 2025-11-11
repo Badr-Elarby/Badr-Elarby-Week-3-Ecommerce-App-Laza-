@@ -258,9 +258,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 final product = filteredProducts[index];
                                 return GestureDetector(
                                   onTap: () {
-                                    context.push(
-                                      '/product-details',
-                                      extra: product,
+                                    context.pushNamed(
+                                      'productDetails',
+                                      pathParameters: {'id': product.id},
                                     );
                                   },
                                   child: HomeProductCard(product: product),

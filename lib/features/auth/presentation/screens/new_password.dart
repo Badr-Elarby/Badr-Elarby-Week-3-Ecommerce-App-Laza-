@@ -45,7 +45,7 @@ class _NewPasswordState extends State<NewPassword> {
                 Icons.arrow_back_ios_new_rounded,
                 color: AppColors.AlmostBlack,
               ),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => context.pop(),
             ),
           ),
         ),

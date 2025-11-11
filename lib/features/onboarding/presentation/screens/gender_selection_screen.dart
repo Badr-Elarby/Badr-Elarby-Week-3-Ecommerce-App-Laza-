@@ -177,7 +177,7 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
                               TextButton(
                                 onPressed: state is GenderLoading
                                     ? null
-                                    : () => context.go('/Home'),
+                                    : () => context.go('/home'),
                                 child: Text(
                                   'Skip',
                                   style: AppTextStyles.Grey17Medium,

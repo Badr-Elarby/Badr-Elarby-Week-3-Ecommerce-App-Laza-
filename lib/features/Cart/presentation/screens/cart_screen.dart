@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:laza/core/di/injection_container.dart';
+import 'package:laza/core/routing/app_router.dart';
 import 'package:laza/core/utils/app_colors.dart';
 import 'package:laza/core/utils/app_styles.dart';
 import 'package:laza/features/Cart/presentation/cubits/cart_cubit.dart';
@@ -50,7 +51,7 @@ class _CartScreenState extends State<CartScreen> {
               if (Navigator.of(context).canPop()) {
                 context.pop();
               } else {
-                context.go('/Home');
+                context.go('/home');
               }
             },
           ),
@@ -111,7 +112,7 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                     SizedBox(height: 24.h),
                     ElevatedButton(
-                      onPressed: () => context.go('/Home'),
+                      onPressed: () => context.go(AppRoutes.home),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.LightPurple,
                         shape: RoundedRectangleBorder(
@@ -320,7 +321,7 @@ class _CartScreenState extends State<CartScreen> {
             height: 60.h,
             child: ElevatedButton(
               onPressed: () {
-                context.push('/OrderConfirmationScreen');
+                context.pushNamed('OrderConfirmationScreen');
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.LightPurple,

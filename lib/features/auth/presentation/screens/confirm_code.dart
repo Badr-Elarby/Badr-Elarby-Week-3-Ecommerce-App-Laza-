@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 class ConfirmCode extends StatefulWidget {
   final String email;
@@ -113,7 +114,7 @@ class _ConfirmCodeState extends State<ConfirmCode> {
                           color: Colors.black,
                           size: 20.sp,
                         ),
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () => context.pop(),
                       ),
                     ),
                   ),

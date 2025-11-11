@@ -101,7 +101,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     color: AppColors.AlmostBlack,
                     size: 20.sp,
                   ),
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () => context.pop(),
                 ),
                 actions: [
                   IconButton(
@@ -110,7 +110,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       color: AppColors.AlmostBlack,
                       size: 22.sp,
                     ),
-                    onPressed: () => context.push('/cart'),
+                    onPressed: () => context.pushNamed('cart'),
                   ),
                 ],
               ),
