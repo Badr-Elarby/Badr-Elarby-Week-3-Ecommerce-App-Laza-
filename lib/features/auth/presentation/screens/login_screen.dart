@@ -117,6 +117,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                   SizedBox(height: 4.h),
                                   TextFormField(
+                                    minLines: 1,
+                                    maxLines: 1,
                                     controller: _emailController,
                                     keyboardType: TextInputType.emailAddress,
                                     validator: (value) {
@@ -166,6 +168,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             SizedBox(height: 4.h),
                             TextFormField(
+                              minLines: 1,
+                              maxLines: 1,
                               controller: _passwordController,
                               obscureText: true,
                               validator: (value) {

@@ -67,11 +67,14 @@ class _NewPasswordState extends State<NewPassword> {
                         textAlign: TextAlign.center,
                       ),
                     ),
-                    SizedBox(height: 150.h),
+                    SizedBox(height: 24.h),
                     Text('Password', style: AppTextStyles.AlmostBlack15Medium),
+                    SizedBox(height: 8.h),
                     TextField(
                       controller: _passwordController,
                       obscureText: true,
+                      minLines: 1,
+                      maxLines: 1,
                       decoration: InputDecoration(
                         hintText: 'Enter new password',
                         border: InputBorder.none,
@@ -95,9 +98,12 @@ class _NewPasswordState extends State<NewPassword> {
                       'Confirm Password',
                       style: AppTextStyles.AlmostBlack15Medium,
                     ),
+                    SizedBox(height: 8.h),
                     TextField(
                       controller: _confirmPasswordController,
                       obscureText: true,
+                      minLines: 1,
+                      maxLines: 1,
                       decoration: InputDecoration(
                         hintText: 'Re-enter new password',
                         border: InputBorder.none,
@@ -147,7 +153,7 @@ class _NewPasswordState extends State<NewPassword> {
                       context.go('/login');
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                           content: Text('Passwords do not match or are empty'),
                         ),
                       );

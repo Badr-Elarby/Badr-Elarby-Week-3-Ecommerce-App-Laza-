@@ -220,6 +220,7 @@ class _ConfirmCodeState extends State<ConfirmCode> {
             border: Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
           ),
           child: TextField(
+            maxLines: 1,
             controller: controllers[index],
             focusNode: focusNodes[index],
             textAlign: TextAlign.center,

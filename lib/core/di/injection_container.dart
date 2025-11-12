@@ -27,6 +27,9 @@ import 'package:laza/features/Cart/data/repositories/cart_repository.dart';
 import 'package:laza/features/Cart/data/services/cart_service.dart';
 import 'package:laza/features/Payment/data/services/paymob_service.dart';
 import 'package:laza/features/Cart/presentation/cubits/cart_cubit.dart';
+import 'package:laza/features/Orders/data/repositories/orders_repository.dart';
+import 'package:laza/features/Orders/data/repositories/orders_repository_impl.dart';
+import 'package:laza/features/Orders/presentation/cubits/orders_cubit/orders_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final getIt = GetIt.instance;
@@ -176,6 +179,17 @@ Future<void> setupGetIt() async {
 
   getIt.registerFactory<CartCubit>(() => CartCubit(getIt<CartRepository>()));
   log('[DI] CartCubit registered');
+
+  // Orders Feature Dependencies
+  getIt.registerLazySingleton<OrdersRepository>(
+    () => OrdersRepositoryImpl(sharedPreferences),
+  );
+  log('[DI] OrdersRepository registered');
+
+  getIt.registerFactory<OrdersCubit>(
+    () => OrdersCubit(getIt<OrdersRepository>()),
+  );
+  log('[DI] OrdersCubit registered');
 
   log('setupGetIt: GetIt setup completed');
 }

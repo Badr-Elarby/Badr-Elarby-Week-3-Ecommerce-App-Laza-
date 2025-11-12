@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -213,13 +214,15 @@ class _AddressSelectionScreenState extends State<AddressSelectionScreen> {
               ),
               child: TextField(
                 controller: _searchController,
+                minLines: 1,
+                maxLines: 2,
                 decoration: InputDecoration(
                   hintText: 'Search address',
                   prefixIcon: const Icon(Icons.search),
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 12,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 12.h,
                   ),
                 ),
                 onSubmitted: (query) {
@@ -271,7 +274,7 @@ class _AddressSelectionScreenState extends State<AddressSelectionScreen> {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8.w),
                         ElevatedButton(
                           onPressed: _confirm,
                           child: const Text('Confirm'),

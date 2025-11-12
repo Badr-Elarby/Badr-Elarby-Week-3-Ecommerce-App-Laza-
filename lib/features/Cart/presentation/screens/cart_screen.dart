@@ -9,6 +9,8 @@ import 'package:laza/core/utils/app_colors.dart';
 import 'package:laza/core/utils/app_styles.dart';
 import 'package:laza/features/Cart/presentation/cubits/cart_cubit.dart';
 import 'package:laza/features/Cart/presentation/cubits/cart_state.dart';
+import 'package:laza/features/Orders/data/models/order_model.dart';
+import 'package:uuid/uuid.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -64,59 +66,63 @@ class _CartScreenState extends State<CartScreen> {
             }
 
             if (state is CartError) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.error_outline,
-                      size: 64.sp,
-                      color: AppColors.Gray,
-                    ),
-                    SizedBox(height: 16.h),
-                    Text(
-                      state.message,
-                      style: AppTextStyles.Grey15Regular,
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 16.h),
-                    ElevatedButton(
-                      onPressed: () => _cartCubit.loadCartItems(),
-                      child: const Text('Retry'),
-                    ),
-                  ],
+              return SafeArea(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: 64.sp,
+                        color: AppColors.Gray,
+                      ),
+                      SizedBox(height: 16.h),
+                      Text(
+                        state.message,
+                        style: AppTextStyles.Grey15Regular,
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 16.h),
+                      ElevatedButton(
+                        onPressed: () => _cartCubit.loadCartItems(),
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
                 ),
               );
             }
 
             if (state is CartEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.shopping_cart_outlined,
-                      size: 64.sp,
-                      color: AppColors.Gray,
-                    ),
-                    SizedBox(height: 16.h),
-                    Text(
-                      'Your cart is empty',
-                      style: AppTextStyles.AlmostBlack17Semibold,
-                    ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      'Add some products to get started',
-                      style: AppTextStyles.Grey15Regular,
-                    ),
-                    SizedBox(height: 24.h),
-                  ],
+              return SafeArea(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.shopping_cart_outlined,
+                        size: 64.sp,
+                        color: AppColors.Gray,
+                      ),
+                      SizedBox(height: 16.h),
+                      Text(
+                        'Your cart is empty',
+                        style: AppTextStyles.AlmostBlack17Semibold,
+                      ),
+                      SizedBox(height: 8.h),
+                      Text(
+                        'Add some products to get started',
+                        style: AppTextStyles.Grey15Regular,
+                      ),
+                      SizedBox(height: 24.h),
+                    ],
+                  ),
                 ),
               );
             }
 
             if (state is CartLoaded) {
-              return _buildCartContent(context, state);
+              return SafeArea(child: _buildCartContent(context, state));
             }
 
             return const Center(child: CircularProgressIndicator());
@@ -223,24 +229,24 @@ class _CartScreenState extends State<CartScreen> {
                         child: item.imageUrl.isNotEmpty
                             ? Image.network(
                                 item.imageUrl,
-                                width: 64.w,
-                                height: 64.w,
+                                width: 100.w,
+                                height: 100.w,
                                 fit: BoxFit.cover,
                                 // Enable caching for better performance
                                 cacheWidth: 128, // Optimize for small thumbnail
                                 errorBuilder: (context, error, stackTrace) {
                                   return Image.asset(
                                     'assets/images/image.png',
-                                    width: 64.w,
-                                    height: 64.w,
+                                    width: 100.w,
+                                    height: 100.w,
                                     fit: BoxFit.cover,
                                   );
                                 },
                               )
                             : Image.asset(
                                 'assets/images/image.png',
-                                width: 64.w,
-                                height: 64.w,
+                                width: 100.w,
+                                height: 100.w,
                                 fit: BoxFit.cover,
                               ),
                       ),
@@ -329,9 +335,9 @@ class _CartScreenState extends State<CartScreen> {
           ),
           SizedBox(height: 24.h),
 
-          // Order Summary
+          // Order Summary - Compact
           Container(
-            padding: EdgeInsets.all(16.w),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
             decoration: BoxDecoration(
               color: AppColors.White,
               borderRadius: BorderRadius.circular(16.r),
@@ -348,7 +354,7 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 8.h),
+                SizedBox(height: 4.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -356,16 +362,18 @@ class _CartScreenState extends State<CartScreen> {
                     Text('\$10.00', style: AppTextStyles.AlmostBlack15Semibold),
                   ],
                 ),
-                SizedBox(height: 8.h),
-                Divider(color: AppColors.Gray.withOpacity(0.3)),
-                SizedBox(height: 8.h),
+                SizedBox(height: 6.h),
+                Divider(color: AppColors.Gray.withOpacity(0.3), height: 1),
+                SizedBox(height: 6.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Total', style: AppTextStyles.AlmostBlack17Semibold),
+                    Text('Total', style: AppTextStyles.AlmostBlack15Semibold),
                     Text(
                       '\$${(state.totalAmount + 10.0).toStringAsFixed(2)}',
-                      style: AppTextStyles.AlmostBlack17Semibold,
+                      style: AppTextStyles.AlmostBlack15Semibold.copyWith(
+                        color: AppColors.LightPurple,
+                      ),
                     ),
                   ],
                 ),
@@ -373,7 +381,7 @@ class _CartScreenState extends State<CartScreen> {
             ),
           ),
 
-          SizedBox(height: 16.h),
+          SizedBox(height: 8.h),
           // Checkout Button
           SizedBox(
             width: double.infinity,
@@ -436,7 +444,34 @@ class _CartScreenState extends State<CartScreen> {
                         );
                         if (!mounted) return;
                         if (result == true) {
-                          goRouter.push('/OrderConfirmationScreen');
+                          // Create order from cart data
+                          final order = OrderModel(
+                            id: const Uuid().v4(), // Generate unique order ID
+                            items: state.cartItems,
+                            subtotal: state.totalAmount,
+                            shipping: 10.0,
+                            total: state.totalAmount + 10.0,
+                            address: _selectedAddress,
+                            orderDate: DateTime.now(),
+                            paymentId: orderId.toString(),
+                          );
+
+                          print(
+                            '🛒 [CartScreen] Order created: ${order.id} with ${order.items.length} items',
+                          );
+
+                          // Clear cart after successful payment
+                          _cartCubit.clearCart();
+
+                          // Navigate to confirmation screen with order data
+                          // Order will be saved by OrderConfirmationScreen (to avoid duplicates)
+                          print(
+                            '🛒 [CartScreen] Navigating to OrderConfirmationScreen with order',
+                          );
+                          goRouter.push(
+                            '/OrderConfirmationScreen',
+                            extra: order,
+                          );
                         } else {
                           messenger.showSnackBar(
                             const SnackBar(
@@ -464,7 +499,7 @@ class _CartScreenState extends State<CartScreen> {
               child: Text('Checkout', style: AppTextStyles.White17Medium),
             ),
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 5.h),
         ],
       ),
     );

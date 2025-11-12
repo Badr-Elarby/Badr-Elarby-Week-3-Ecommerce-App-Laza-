@@ -159,14 +159,14 @@ class HomeProductCard extends StatelessWidget {
             ),
             // Product Details
             Padding(
-              padding: const EdgeInsets.all(6.0),
+              padding: const EdgeInsets.all(2.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     product.name,
                     style: const TextStyle(
-                      fontSize: 16,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                     maxLines: 2,

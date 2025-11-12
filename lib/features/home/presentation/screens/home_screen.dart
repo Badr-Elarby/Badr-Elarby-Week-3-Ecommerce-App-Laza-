@@ -46,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onScroll() {
     // Safety check: ensure scroll controller is attached and has valid position
     if (!_scrollController.hasClients) return;
-    
+
     final position = _scrollController.position;
     if (position.pixels >= position.maxScrollExtent * 0.8) {
       // Load more when 80% scrolled
@@ -159,7 +159,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   // Main Content
                   Expanded(
                     child: SingleChildScrollView(
-                      controller: _scrollController, // Attach scroll controller for pagination
+                      controller:
+                          _scrollController, // Attach scroll controller for pagination
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16.w),
                         child: Column(
@@ -168,6 +169,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             SizedBox(height: 16.h),
                             // Search Bar
                             TextField(
+                              minLines: 1,
+                              maxLines: 2,
                               decoration: InputDecoration(
                                 hintText: 'Search...',
                                 prefixIcon: Icon(
@@ -272,11 +275,15 @@ class _HomeScreenState extends State<HomeScreen> {
                             Builder(
                               builder: (context) {
                                 // Calculate filtered products once per build
-                                final filteredProducts = _filterProducts(state.products);
+                                final filteredProducts = _filterProducts(
+                                  state.products,
+                                );
                                 return GridView.builder(
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
-                                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 16.w,
+                                  ),
                                   itemCount: filteredProducts.length,
                                   gridDelegate: ProductGridConfig.gridDelegate,
                                   itemBuilder: (context, index) {
@@ -304,7 +311,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                             // End of list indicator
-                            if (!state.hasMorePages && state.products.isNotEmpty)
+                            if (!state.hasMorePages &&
+                                state.products.isNotEmpty)
                               Padding(
                                 padding: EdgeInsets.symmetric(vertical: 24.h),
                                 child: Center(

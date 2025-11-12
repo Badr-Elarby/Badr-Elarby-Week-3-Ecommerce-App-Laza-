@@ -101,7 +101,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       case 2:
         return isSelected ? Icons.shopping_cart : Icons.shopping_cart_outlined;
       case 3:
-        return isSelected ? Icons.person : Icons.person_outline;
+        return isSelected ? Icons.shopping_bag : Icons.shopping_bag_outlined;
       default:
         return Icons.home_outlined;
     }
@@ -116,7 +116,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       case 2:
         return 'Cart';
       case 3:
-        return 'Profile';
+        return 'Orders';
       default:
         return 'Home';
     }
@@ -132,7 +132,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     if (location == '/cart') {
       return 2;
     }
-    if (location == '/profile') {
+    if (location == '/orders') {
       return 3;
     }
     return 0;
@@ -155,7 +155,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         context.go('/cart');
         break;
       case 3:
-        context.go('/profile');
+        context.go('/orders');
         break;
     }
   }

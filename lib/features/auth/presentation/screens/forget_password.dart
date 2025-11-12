@@ -68,6 +68,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     SizedBox(height: 4.h),
                     TextField(
                       controller: _emailController,
+                      minLines: 1,
+                      maxLines: 1,
                       decoration: InputDecoration(
                         hintText: 'bill.sanders@example.com',
                         border: InputBorder.none,

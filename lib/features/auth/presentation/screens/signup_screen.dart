@@ -67,6 +67,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       Text('First Name', style: AppTextStyles.Grey15Regular),
                       SizedBox(height: 4.h),
                       TextFormField(
+                        minLines: 1,
+                        maxLines: 1,
                         controller: _firstNameController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -89,6 +91,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       Text('Last Name', style: AppTextStyles.Grey15Regular),
                       SizedBox(height: 4.h),
                       TextFormField(
+                        minLines: 1,
+                        maxLines: 1,
                         controller: _lastNameController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -111,6 +115,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       Text('Email', style: AppTextStyles.Grey15Regular),
                       SizedBox(height: 4.h),
                       TextFormField(
+                        minLines: 1,
+                        maxLines: 1,
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
                         validator: (value) {
@@ -139,6 +145,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       Text('Password', style: AppTextStyles.Grey15Regular),
                       SizedBox(height: 4.h),
                       TextFormField(
+                        minLines: 1,
+                        maxLines: 1,
                         controller: _passwordController,
                         obscureText: true,
                         validator: (value) {

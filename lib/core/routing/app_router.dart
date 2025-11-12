@@ -5,6 +5,7 @@ import 'package:laza/core/di/injection_container.dart';
 import 'package:laza/core/routing/app_shell.dart';
 import 'package:laza/features/Cart/presentation/screens/order_confirmation_screen.dart';
 import 'package:laza/features/Cart/presentation/screens/address_selection_screen.dart';
+import 'package:laza/features/Orders/data/models/order_model.dart';
 import 'package:laza/features/Payment/presentation/screens/paymob_webview_screen.dart';
 import 'package:laza/features/auth/presentation/screens/confirm_code.dart';
 import 'package:laza/features/auth/presentation/screens/forget_password.dart';
@@ -23,6 +24,8 @@ import 'package:laza/features/home/presentation/screens/home_screen.dart';
 import 'package:laza/features/home/presentation/cubits/home_cubit/home_cubit.dart';
 import 'package:laza/features/ProductDetails/presentation/screens/product_details_screen.dart';
 import 'package:laza/features/ProductDetails/presentation/cubit/product_details_cubit.dart';
+import 'package:laza/features/Orders/presentation/screens/orders_screen.dart';
+import 'package:laza/features/Orders/presentation/cubits/orders_cubit/orders_cubit.dart';
 
 class AppRouter {
   late GoRouter router;
@@ -99,7 +102,10 @@ class AppRouter {
         GoRoute(
           path: '/OrderConfirmationScreen',
           name: AppRoutes.OrderConfirmationScreen,
-          builder: (context, state) => const OrderConfirmationScreen(),
+          builder: (context, state) {
+            final order = state.extra as OrderModel?;
+            return OrderConfirmationScreen(order: order);
+          },
         ),
         GoRoute(
           path: '/paymob-webview',
@@ -144,17 +150,13 @@ class AppRouter {
               name: AppRoutes.cart,
               builder: (context, state) => const CartScreen(),
             ),
-            // Profile route placeholder (inside shell to show bottom nav)
+            // Orders route (replaces Profile in bottom nav)
             GoRoute(
-              path: '/profile',
-              name: AppRoutes.profile,
-              builder: (context, state) => Scaffold(
-                appBar: AppBar(
-                  title: const Text('Profile'),
-                ),
-                body: const Center(
-                  child: Text('Profile screen coming soon'),
-                ),
+              path: '/orders',
+              name: AppRoutes.orders,
+              builder: (context, state) => BlocProvider(
+                create: (context) => getIt<OrdersCubit>(),
+                child: const OrdersScreen(),
               ),
             ),
           ],
@@ -177,7 +179,7 @@ class AppRoutes {
   static const String home = 'home';
   static const String favorites = 'favorites';
   static const String cart = 'cart';
-  static const String profile = 'profile';
+  static const String orders = 'orders';
   static const String productDetails = 'productDetails';
   static const String OrderConfirmationScreen = 'OrderConfirmationScreen';
   static const String paymobWebview = 'paymobWebview';
