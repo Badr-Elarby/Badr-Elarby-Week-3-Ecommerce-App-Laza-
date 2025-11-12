@@ -1,13 +1,11 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:laza/core/di/injection_container.dart';
 import 'package:laza/core/utils/app_colors.dart';
 import 'package:laza/core/utils/app_styles.dart';
 import 'package:laza/features/auth/data/repositories/auth_repository.dart';
-import 'package:shimmer/shimmer.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -72,28 +70,13 @@ class _SplashScreenState extends State<SplashScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(height: 5.h),
-              Shimmer.fromColors(
-                baseColor: AppColors.White,
-                highlightColor: AppColors.DarkCyanGray,
-                period: const Duration(seconds: 3),
-                child: Text('Laza', style: AppTextStyles.White40Regular)
-                    .animate()
-                    .fadeIn(duration: 1000.ms, delay: 500.ms)
-                    .slideY(begin: 0.5),
-              ),
+              // OPTIMIZATION: Removed animations (Shimmer / flutter_animate) for faster startup
+              Text('Laza', style: AppTextStyles.White40Regular),
               SizedBox(height: 5.h),
-              Shimmer.fromColors(
-                    baseColor: AppColors.White,
-                    highlightColor: AppColors.DarkCyanGray,
-                    period: const Duration(seconds: 3),
-                    child: Text(
-                      'Find Your Style',
-                      style: AppTextStyles.White35Regular,
-                    ),
-                  )
-                  .animate()
-                  .fadeIn(duration: 1500.ms, delay: 1000.ms)
-                  .slideY(begin: 0.6),
+              Text(
+                'Find Your Style',
+                style: AppTextStyles.White35Regular,
+              ),
             ],
           ),
         ),
