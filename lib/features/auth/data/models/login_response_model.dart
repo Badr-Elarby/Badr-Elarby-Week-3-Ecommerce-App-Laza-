@@ -1,5 +1,8 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 
+// OPTIMIZATION: @immutable annotation enables Dart analyzer optimizations
+@immutable
 class LoginResponseModel extends Equatable {
   final String accessToken;
   final DateTime expiresAtUtc;

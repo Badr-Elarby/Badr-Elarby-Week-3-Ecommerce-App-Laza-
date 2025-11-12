@@ -1,5 +1,8 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 
+// OPTIMIZATION: @immutable annotation enables Dart analyzer optimizations
+@immutable
 class ProductDetailsModel extends Equatable {
   final String id;
   final String productCode;
@@ -70,9 +73,9 @@ class ProductDetailsModel extends Equatable {
     );
   }
 
-  @override
   bool get inStock => stock > 0;
 
+  @override
   List<Object?> get props => [
     id,
     productCode,

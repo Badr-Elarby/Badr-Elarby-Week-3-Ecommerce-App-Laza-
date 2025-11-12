@@ -28,14 +28,11 @@ class OrdersCubit extends Cubit<OrdersState> {
   /// Save a new order
   Future<void> saveOrder(OrderModel order) async {
     try {
-      print('📦 [OrdersCubit] Saving order: ${order.id}');
+      // OPTIMIZATION: Removed print() statements for better performance
       await _ordersRepository.saveOrder(order);
-      print('📦 [OrdersCubit] Order saved successfully, reloading orders...');
       // Reload orders to reflect the new order
       await loadOrders();
-      print('📦 [OrdersCubit] Orders reloaded');
     } catch (e) {
-      print('📦 [OrdersCubit] Error saving order: $e');
       emit(OrdersError('Failed to save order: $e'));
     }
   }
@@ -43,14 +40,11 @@ class OrdersCubit extends Cubit<OrdersState> {
   /// Delete an order by ID
   Future<void> deleteOrder(String orderId) async {
     try {
-      print('🗑️ [OrdersCubit] Deleting order: $orderId');
+      // OPTIMIZATION: Removed print() statements for better performance
       await _ordersRepository.deleteOrder(orderId);
-      print('🗑️ [OrdersCubit] Order deleted, reloading orders...');
       // Reload orders to reflect the deletion
       await loadOrders();
-      print('🗑️ [OrdersCubit] Orders reloaded after deletion');
     } catch (e) {
-      print('🗑️ [OrdersCubit] Error deleting order: $e');
       emit(OrdersError('Failed to delete order: $e'));
     }
   }

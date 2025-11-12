@@ -1,7 +1,10 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:laza/features/Cart/data/models/cart_item_model.dart';
 
 /// Model representing a completed order
+// OPTIMIZATION: @immutable annotation enables Dart analyzer optimizations
+@immutable
 class OrderModel extends Equatable {
   final String id;
   final List<CartItemModel> items;
@@ -70,14 +73,13 @@ class OrderModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        items,
-        subtotal,
-        shipping,
-        total,
-        address,
-        orderDate,
-        paymentId,
-      ];
+    id,
+    items,
+    subtotal,
+    shipping,
+    total,
+    address,
+    orderDate,
+    paymentId,
+  ];
 }
-

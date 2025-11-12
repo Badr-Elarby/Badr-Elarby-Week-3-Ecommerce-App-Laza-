@@ -17,7 +17,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   /// Loads the first page of products (initial load)
   Future<void> getProducts({int? page, int? pageSize}) async {
-    print('HomeCubit: Loading products (page: ${page ?? 1})...');
+    // OPTIMIZATION: Removed print() statement for better startup performance
     emit(HomeLoading());
     try {
       final response = await _homeRepository.getProducts(
@@ -31,14 +31,14 @@ class HomeCubit extends Cubit<HomeState> {
         return product.copyWith(isLiked: isFavorite);
       }).toList();
 
-      print('HomeCubit: Loaded ${products.length} products successfully');
-      emit(HomeSuccess(
-        products: products,
-        hasMorePages: response.hasNextPage,
-        currentPage: response.page,
-      ));
+      emit(
+        HomeSuccess(
+          products: products,
+          hasMorePages: response.hasNextPage,
+          currentPage: response.page,
+        ),
+      );
     } catch (e) {
-      print('HomeCubit: Error loading products: $e');
       emit(HomeError(e.toString()));
     }
   }
@@ -54,7 +54,7 @@ class HomeCubit extends Cubit<HomeState> {
     }
 
     final nextPage = currentState.currentPage + 1;
-    print('HomeCubit: Loading next page ($nextPage)...');
+    // OPTIMIZATION: Removed print() statement for better performance
 
     // Emit loading more state
     emit(currentState.copyWith(isLoadingMore: true));
@@ -74,15 +74,15 @@ class HomeCubit extends Cubit<HomeState> {
       // Append new products to existing list
       final allProducts = [...currentState.products, ...newProducts];
 
-      print('HomeCubit: Loaded ${newProducts.length} more products (total: ${allProducts.length})');
-      emit(HomeSuccess(
-        products: allProducts,
-        hasMorePages: response.hasNextPage,
-        isLoadingMore: false,
-        currentPage: nextPage,
-      ));
+      emit(
+        HomeSuccess(
+          products: allProducts,
+          hasMorePages: response.hasNextPage,
+          isLoadingMore: false,
+          currentPage: nextPage,
+        ),
+      );
     } catch (e) {
-      print('HomeCubit: Error loading next page: $e');
       // Revert to previous state on error
       emit(currentState.copyWith(isLoadingMore: false));
     }
@@ -113,11 +113,7 @@ class HomeCubit extends Cubit<HomeState> {
 
         // Emit updated state with pagination info preserved
         emit(currentState.copyWith(products: updatedProducts));
-        print(
-          'HomeCubit: Toggled favorite for product ${product.id} (isFavorite: ${!isFavorite})',
-        );
       } catch (e) {
-        print('HomeCubit: Error toggling favorite: $e');
         emit(HomeError('Failed to toggle favorite: $e'));
       }
     }

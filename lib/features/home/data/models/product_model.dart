@@ -1,5 +1,8 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 
+// OPTIMIZATION: @immutable annotation enables Dart analyzer optimizations
+@immutable
 class ProductModel extends Equatable {
   final String id;
   final String productCode;

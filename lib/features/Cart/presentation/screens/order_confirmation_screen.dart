@@ -37,21 +37,12 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
             // Save order once when widget is built and order is provided
             if (widget.order != null && !_orderSaved) {
               _orderSaved = true;
-              print(
-                '✅ [OrderConfirmationScreen] Order received: ${widget.order!.id}',
-              );
+              // OPTIMIZATION: Removed print() statements for better performance
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (mounted) {
-                  print('✅ [OrderConfirmationScreen] Saving order to cubit...');
                   context.read<OrdersCubit>().saveOrder(widget.order!);
-                } else {
-                  print(
-                    '❌ [OrderConfirmationScreen] Widget not mounted, cannot save order',
-                  );
                 }
               });
-            } else if (widget.order == null) {
-              print('⚠️ [OrderConfirmationScreen] No order provided');
             }
             return Scaffold(
               backgroundColor: AppColors.SoftCloud,

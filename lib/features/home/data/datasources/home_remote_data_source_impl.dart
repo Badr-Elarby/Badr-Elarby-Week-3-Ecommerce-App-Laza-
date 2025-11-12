@@ -16,7 +16,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
           if (pageSize != null) 'pageSize': pageSize,
         },
       );
-      print('API Response Structure: ${response.data}'); // Debug print
+      // OPTIMIZATION: Removed debug print() statement for better performance
 
       if (response.data is! Map<String, dynamic>) {
         throw Exception('Unexpected response format: expected a Map');
@@ -28,7 +28,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
         e.response?.data['message'] ?? 'Failed to fetch products',
       );
     } catch (e) {
-      print('Error details: $e'); // Debug print
+      // OPTIMIZATION: Removed debug print() statement for better performance
       throw Exception('An unknown error occurred while fetching products');
     }
   }

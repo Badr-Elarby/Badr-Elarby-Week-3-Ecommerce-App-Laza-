@@ -308,9 +308,8 @@ class _ConfirmCodeState extends State<ConfirmCode> {
           if (controllers.every((c) => c.text.isNotEmpty)) {
             FocusScope.of(context).unfocus();
             // Static UI only - no confirm logic
-          } else {
-            print('ConfirmCode: Not all fields are filled');
           }
+          // OPTIMIZATION: Removed print() statement for better performance
         },
         child: Text(
           'Confirm Code',

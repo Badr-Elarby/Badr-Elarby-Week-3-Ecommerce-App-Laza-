@@ -456,18 +456,12 @@ class _CartScreenState extends State<CartScreen> {
                             paymentId: orderId.toString(),
                           );
 
-                          print(
-                            '🛒 [CartScreen] Order created: ${order.id} with ${order.items.length} items',
-                          );
-
+                          // OPTIMIZATION: Removed print() statements for better performance
                           // Clear cart after successful payment
                           _cartCubit.clearCart();
 
                           // Navigate to confirmation screen with order data
                           // Order will be saved by OrderConfirmationScreen (to avoid duplicates)
-                          print(
-                            '🛒 [CartScreen] Navigating to OrderConfirmationScreen with order',
-                          );
                           goRouter.push(
                             '/OrderConfirmationScreen',
                             extra: order,
