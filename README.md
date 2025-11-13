@@ -124,17 +124,19 @@ lib/
 
 ## 📸 Screenshots
 
+---
+
 ### 🔐 Authentication
 | Login |
 |:--:|
-| ![Login](screenshots/login.jpg) | 
+| ![Login](screenshots/login.jpg) |
 
 ---
 
 ### 🟢 Splash & Onboarding
 | Onboarding |
 |:--:|
- ![Onboarding](screenshots/onboarding.jpg) |
+| ![Onboarding](screenshots/onboarding.jpg) |
 
 ---
 
@@ -155,19 +157,19 @@ lib/
 ### 📄 Product Details
 | Product Details |
 |:--:|
-| ![Product Details](screenshots/product_details.jpg) |favourite
+| ![Product Details](screenshots/product_details.jpg) |
 
 ---
 
 ### 🛒 Cart (Before Address)
-| Cart (No Address Added Yet) |
+| Cart (Before Adding Address) |
 |:--:|
 | ![CartBeforeAddress](screenshots/cart_before_address.jpg) |
 
 ---
 
 ### 📍 Address Selection (Google Maps)
-| Entering Address on Map |
+| Select Address on Map |
 |:--:|
 | ![Map](screenshots/map.jpg) |
 
@@ -181,7 +183,7 @@ lib/
 ---
 
 ### 💳 Payment
-| Payment – Entering Card Details |
+| Enter Card Details |
 |:--:|
 | ![Payment](screenshots/payment.jpg) |
 
@@ -202,4 +204,6 @@ lib/
 ---
 
 ## 🎬 Demo Video
+
 ![Demo](screenshots/demo.gif)
+
