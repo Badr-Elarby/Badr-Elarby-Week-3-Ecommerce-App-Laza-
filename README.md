@@ -133,7 +133,7 @@ lib/
 
 ---
 
-### 🟢 Splash & Onboarding
+### 🟢 Onboarding
 | Onboarding |
 |:--:|
 | ![Onboarding](screenshots/onboarding.jpg) |
