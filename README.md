@@ -127,9 +127,9 @@ lib/
 ---
 
 ### 🔐 Authentication
-| Login |
-|:--:|
-| ![Login](screenshots/login.jpg) |
+| Login | Login |
+|:--:|:--:|
+| ![Login](screenshots/login.jpg) | ![sign_up](screenshots/sign_up.jpg) |
 
 ---
 
