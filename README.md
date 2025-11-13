@@ -126,7 +126,7 @@ lib/
 
 ### 🔐 Authentication
 | Login |
-|:--:|:--:|
+|:--:|
 | ![Login](screenshots/login.jpg) | 
 
 ---
@@ -148,7 +148,7 @@ lib/
 ### 💖 Favorites
 | Favorites |
 |:--:|
-| ![Favorites](screenshots/.jpg) |
+| ![Favorites](screenshots/favourite.jpg) |
 
 ---
 
