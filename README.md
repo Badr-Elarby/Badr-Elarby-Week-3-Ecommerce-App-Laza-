@@ -1,45 +1,69 @@
 # Laza E-commerce App
 [![Ask DeepWiki](https://devin.ai/assets/askdeepwiki.png)](https://deepwiki.com/Badr-Elarby/Badr-Elarby-Week-3-Ecommerce-App-Laza-)
 
-Laza is a stylish and modern e-commerce mobile application built with Flutter. It provides a seamless shopping experience for users to browse, favorite, and purchase fashion products. The app features a clean user interface, robust state management, and a feature-rich, scalable architecture.
-
+Laza is a stylish and modern e-commerce mobile application built with Flutter.  
+It provides a seamless shopping experience for users to browse, favorite, and purchase products —  
+with maps integration, payment flow, and full order management.
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
 For a deeper understanding of the project — including detailed diagrams and an in-depth breakdown of each layer and feature —  
 **[click here](https://deepwiki.com/Badr-Elarby/Badr-Elarby-Week-3-Ecommerce-App-Laza-/2.1-clean-architecture-and-layered-design)**.
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
 
 
-## Key Features
+## 🚀 Key Features
 
-- **User Authentication:** Secure login and registration flow with email and password. Session management is handled using access and refresh tokens, with automatic token renewal via a Dio interceptor.
-- **Personalized Onboarding:** A gender selection screen to tailor the initial product discovery experience.
-- **Product Discovery:**
-    - **Home Screen:** Displays a curated list of products.
-    - **Brand Filtering:** Easily filter products by popular brands like Adidas, Nike, Fila, and Puma.
-    - **Search:** A functional search bar to quickly find items.
-- **Product Details:** A comprehensive detail screen for each product, showcasing multiple images, description, price, ratings, and stock availability.
-- **Favorites / Wishlist:** Users can "like" products and save them to a persistent favorites list for later viewing.
-- **Shopping Cart:** A fully functional shopping cart where users can add items, update quantities, remove items, and view a summary of their order before proceeding to checkout.
-- **Order Confirmation:** A confirmation screen to notify the user that their order has been placed successfully.
-- **Declarative Routing:** A clean and maintainable navigation system built with `go_router`, including a shell route for the main screens with a persistent bottom navigation bar.
+- **User Authentication**  
+  Login & signup using email/password with secure token handling (access + refresh tokens).
 
-## Architecture & Tech Stack
+- **Onboarding Flow**  
+  Tailored experience with gender selection.
+
+- **Product Discovery**  
+  - Home screen with curated products  
+  - Brand filters (Nike / Adidas / Puma / Fila)  
+  - Search functionality  
+
+- **Product Details**  
+  Multiple images, description, price, rating, and stock info.
+
+- **Favorites (Wishlist)**  
+  Save products locally with persistent storage.
+
+- **Shopping Cart**  
+  Add/remove items, update quantities, and view order summary.
+
+- **Address Selection (Maps)**  
+  Choose delivery address from a live map using Google Maps.
+
+- **Payment Flow**  
+  Full checkout experience including entering card details and placing an order.
+
+- **Orders Screen**  
+  A complete history of user's orders.
+
+- **Order Confirmation**  
+  Visual confirmation after placing an order successfully.
+
+- **Declarative Routing**  
+  Built with `go_router` + shell navigation for main tabs.
+
+---
+## 🧱 Architecture & Tech Stack
 
 This project follows a clean, feature-first architecture to ensure scalability and maintainability.
 
-- **Architecture:** Feature-based layered architecture (`data`, `presentation`).
-- **State Management:** `flutter_bloc` / `Cubit` for predictable and reactive state management.
-- **Dependency Injection:** `get_it` for managing dependencies and decoupling components.
-- **Networking:** `dio` for handling HTTP requests, with a custom interceptor for handling authentication and token refreshes.
-- **Routing:** `go_router` for a robust, declarative navigation system.
-- **Local Storage:**
-  - `flutter_secure_storage` for securely persisting authentication tokens.
-  - `shared_preferences` for storing user preferences like favorites, cart items, and gender selection.
-- **UI:**
-  - `flutter_screenutil` for creating responsive UIs that adapt to different screen sizes.
-  - `google_fonts` for custom typography.
-  - `flutter_animate` and `shimmer` for engaging animations and loading effects.
-- **Utilities:** `equatable` for simplifying model comparisons.
+- **Clean Architecture** (Feature-based)
+- **State Management:** Cubit / flutter_bloc  
+- **DI:** get_it  
+- **Networking:** dio + interceptors  
+- **Local Storage:**  
+  - flutter_secure_storage – tokens  
+  - shared_preferences – cart, favorites, gender  
+- **Routing:** go_router  
+- **Maps:** google_maps_flutter  
+- **Payment UI:** custom credit card form  
+- **Animations:** shimmer & flutter_animate  
+- **UI Scaling:** flutter_screenutil  
 
 ## Getting Started
 
@@ -76,63 +100,106 @@ The project's `lib` directory is organized to separate concerns and features, ma
 
 ```
 lib/
-├── core/                  # Shared utilities, services, and widgets
-│   ├── di/                # Dependency injection setup (get_it)
-│   ├── network/           # Dio configuration and interceptors
-│   ├── routing/           # App routing with GoRouter
-│   ├── services/          # Core services (e.g., local storage)
-│   ├── utils/             # App-wide constants (colors, styles)
-│   └── widgets/           # Common widgets (e.g., BottomNavBar)
-├── features/              # Individual feature modules
-│   ├── auth/              # Authentication (login, signup)
-│   ├── Cart/              # Shopping cart functionality
-│   ├── Favorites/         # Wishlist/favorites management
-│   ├── home/              # Home screen and product listing
-│   ├── onboarding/        # Initial setup screens (gender selection)
-│   ├── ProductDetails/    # Product details screen
-│   └── spalsh/            # Splash screen
-└── main.dart              # Application entry point
+├── core/
+│   ├── di/
+│   ├── network/
+│   ├── routing/
+│   ├── services/
+│   ├── utils/
+│   └── widgets/
+└── features/
+    ├── auth/
+    ├── cart/
+    ├── favorites/
+    ├── home/
+    ├── onboarding/
+    ├── product_details/
+    ├── orders/
+    ├── payment/
+    ├── map/
+    └── splash/
+
 ```
 
 
 ## 📸 Screenshots
 
-### 🟢 Splash & Onboarding
-| Splash | Onboarding |
+### 🔐 Authentication
+| Login |
 |:--:|:--:|
-| ![Splash](screenshots/splash.jpg) | ![Onboarding](screenshots/onboarding.jpg) |
+| ![Login](screenshots/login.jpg) | 
 
 ---
 
-### 🔐 Authentication
-| Login | Signup |
-|:--:|:--:|
-| ![Login](screenshots/login.jpg) | ![Signup](screenshots/signup.jpg) |
+### 🟢 Splash & Onboarding
+| Onboarding |
+|:--:|
+ ![Onboarding](screenshots/onboarding.jpg) |
 
 ---
 
 ### 🏠 Home Screens
-| Home 1 | Home 2 | Home 3 |
-|:--:|:--:|:--:|
-| ![Home1](screenshots/home0.jpg) | ![Home2](screenshots/home1.jpg) | ![Home3](screenshots/home2.jpg) |
+| Home 1 | Home 2 |
+|:--:|:--:|
+| ![Home1](screenshots/home1.jpg) | ![Home2](screenshots/home2.jpg) |
 
 ---
 
-### 💖 Favorites & Product Details
-| Favorites | Product Details |
-|:--:|:--:|
-| ![Favorites](screenshots/favourite.jpg) | ![Product Details](screenshots/ProductDetails.jpg) |
+### 💖 Favorites
+| Favorites |
+|:--:|
+| ![Favorites](screenshots/.jpg) |
 
 ---
 
-### 🛒 Cart & Order Confirmation
-| Cart | Order Confirmation |
-|:--:|:--:|
-| ![Cart](screenshots/cart.jpg) | ![Order Confirmation](screenshots/OrderConfirmation.jpg) |
+### 📄 Product Details
+| Product Details |
+|:--:|
+| ![Product Details](screenshots/product_details.jpg) |favourite
 
+---
 
-## 🎬 App Preview
+### 🛒 Cart (Before Address)
+| Cart (No Address Added Yet) |
+|:--:|
+| ![CartBeforeAddress](screenshots/cart_before_address.jpg) |
 
-![App Demo](screenshots/demo.gif)
+---
 
+### 📍 Address Selection (Google Maps)
+| Entering Address on Map |
+|:--:|
+| ![Map](screenshots/map.jpg) |
 
+---
+
+### 🛒 Cart (After Address)
+| Cart (Address Added) |
+|:--:|
+| ![CartAfterAddress](screenshots/cart_after_address.jpg) |
+
+---
+
+### 💳 Payment
+| Payment – Entering Card Details |
+|:--:|
+| ![Payment](screenshots/payment.jpg) |
+
+---
+
+### ✅ Order Confirmation
+| Order Confirmation |
+|:--:|
+| ![OrderConfirmation](screenshots/order_confirmation.jpg) |
+
+---
+
+### 📦 Orders Page
+| My Orders |
+|:--:|
+| ![Orders](screenshots/orders.jpg) |
+
+---
+
+## 🎬 Demo Video
+![Demo](screenshots/demo.gif)
